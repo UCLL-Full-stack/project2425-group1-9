@@ -1,46 +1,68 @@
 import userRepository from '../repository/User.db';
+import { UserInput } from '../types'; 
 import { User } from '../model/User';
+import { error } from 'console';
 
-const createUser = (user: User): User => {
-  const existingUser = userRepository.getAllUsers().find(
-    (u) => u.name === user.name 
-  );
-  if (existingUser) {
-    throw new Error(
-      `A user with the name ${user.name} already exists.`
-    )};  
+const createUser = async (userInput: UserInput): Promise<User> => {
+    const existingUser = userRepository.findUserByName(userInput.name);
+    if (existingUser) {
+        throw new Error(`User creation failed. Please try a different name.`);
+    }
 
-  return userRepository.createUser(user);
+    if (userInput.id === undefined) {
+      throw new Error(`User creation failed. Please provide a valid id.`);
+    }
+
+    const newUser = new User(
+        userInput.id,
+        userInput.name,
+        userInput.email,
+        userInput.password,
+        userInput.tasks
+    );
+    return userRepository.createUser(newUser);
 };
 
-const getUserById = (id: number): User | null => {
-  return userRepository.getUserById(id);
+const getUserById = async (id: number): Promise<User | null> => {
+    return userRepository.getUserById(id);
 };
 
-const getAllUsers = (): User[] => {
-  return userRepository.getAllUsers();
+const getAllUsers = async (): Promise<User[]> => {
+    return userRepository.getAllUsers();
 };
 
-const updateUser = (updatedUser: User): User | null => {
-  const existingUser = userRepository.getUserById(updatedUser.id);
-  if (!existingUser) {
-    throw new Error(`User with ID ${updatedUser.id} does not exist.`);
-  }
-  return userRepository.updateUser(updatedUser);
+const updateUser = async (updatedUserInput: UserInput): Promise<User | null> => {
+    if (updatedUserInput.id === undefined) {
+        throw new Error('User ID is required for update.');
+    }
+
+    const existingUser = userRepository.getUserById(updatedUserInput.id);
+    if (!existingUser) {
+        throw new Error(`User with ID ${updatedUserInput.id} does not exist.`);
+    }
+
+    const updatedUser = new User(
+        updatedUserInput.id,
+        updatedUserInput.name,
+        updatedUserInput.email,
+        updatedUserInput.password,
+        existingUser.tasks
+    );
+    return userRepository.updateUser(updatedUser);
 };
 
-const deleteUser = (id: number): boolean => {
-  const existingUser = userRepository.getUserById(id);
-  if (!existingUser) {
-    throw new Error(`User with ID ${id} does not exist.`);
-  }
-  return userRepository.deleteUser(id);
+const deleteUser = async (id: number): Promise<boolean> => {
+    const existingUser = userRepository.getUserById(id);
+    if (!existingUser) {
+        throw new Error(`User with ID ${id} does not exist.`);
+    }
+    return userRepository.deleteUser(id);
 };
 
 export default {
-  createUser,
-  getUserById,
-  getAllUsers,
-  updateUser,
-  deleteUser,
+    createUser,
+    getUserById,
+    getAllUsers,
+    updateUser,
+    deleteUser,
 };

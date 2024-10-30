@@ -15,6 +15,10 @@ const getAllUsers = (): User[] => {
   return users;
 };
 
+const findUserByName = (name: string): User | null => {
+  return users.find(user => user.name === name) || null
+}
+
 const updateUser = (updatedUser: User): User | null => {
   const index = users.findIndex(user => user.id === updatedUser.id);
   if (index > -1) {
@@ -38,5 +42,6 @@ export default {
   getUserById,
   getAllUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  findUserByName
 };

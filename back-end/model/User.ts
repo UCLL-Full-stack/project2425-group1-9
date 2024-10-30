@@ -1,12 +1,12 @@
 import {Task} from '../model/Task'
 export class User {
-  public tasks: Task[] = []; 
 
   constructor(
     public id: number,
     public name: string,
     public email: string,
     public password: string,
+    public tasks: Task[],
   ) {
     this.validate();
   }

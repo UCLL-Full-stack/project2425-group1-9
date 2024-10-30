@@ -2,8 +2,6 @@ import { Tag } from './Tag'
 import { Reminder } from './Reminder'; 
 
 export class Task {
-  public tags: Tag[] = []; 
-  public reminder?: Reminder;
 
   constructor(
     public id: number,
@@ -12,7 +10,8 @@ export class Task {
     public priority: 'low' | 'medium' | 'high',
     public deadline: Date,
     public status: 'not finished' | 'finished' = 'not finished',
-    public userId: number
+    public tags: Tag[],
+    public reminder?: Reminder,
   ) {
     this.validate();
   }
