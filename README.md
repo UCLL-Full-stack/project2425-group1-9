@@ -9,4 +9,4 @@ een prioriteit en tags voor extra organisatie. Gebruikers kunnen hun taken filte
 basis van status (voltooid/niet voltooid). Met TaskMaster kunnen gebruikers hun
 productiviteit verbeteren door hun dagelijkse taken effectief te beheren
 
-### \<Cas Marien\> / \<Vic Verhoeven\>
+Cas Marien Vic Verhoeven
