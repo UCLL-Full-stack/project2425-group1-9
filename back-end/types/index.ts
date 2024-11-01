@@ -25,10 +25,10 @@ type TagInput = {
 type TaskInput = {
     id?: number;            
     title: string;           
-    description?: string;    
+    description: string;    
     priority: 'low' | 'medium' | 'high';
     deadline: Date;          
-    status?: 'not finished' | 'finished';
+    status: 'not finished' | 'finished';
     tags: []     
     reminder?: Reminder; 
 };

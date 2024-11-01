@@ -8,15 +8,19 @@ const createTask = (task: Task): Task => {
 };
 
 const getTaskById = (id: number): Task | null => {
-  return tasks.find(task => task.id === id) || null;
+  return tasks.find(task => task.getId() === id) || null;
 };
+
+const getTaskByTitle = (title: string): Task | null => {
+  return tasks.find(task => task.getTitle() === title) || null
+}
 
 const getAllTasks = (): Task[] => {
   return tasks;
 };
 
 const updateTask = (updatedTask: Task): Task | null => {
-  const index = tasks.findIndex(task => task.id === updatedTask.id);
+  const index = tasks.findIndex(task => task.getId() === updatedTask.getId());
   if (index > -1) {
     tasks[index] = updatedTask;
     return updatedTask;
@@ -25,7 +29,7 @@ const updateTask = (updatedTask: Task): Task | null => {
 };
 
 const deleteTask = (id: number): boolean => {
-  const index = tasks.findIndex(task => task.id === id); 
+  const index = tasks.findIndex(task => task.getId() === id); 
 
   if (index > -1) {  
     tasks.splice(index, 1);  
@@ -40,5 +44,6 @@ export default {
   getTaskById,
   getAllTasks,
   updateTask,
-  deleteTask
+  deleteTask,
+  getTaskByTitle
 };

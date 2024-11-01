@@ -3,7 +3,7 @@ import { TaskInput } from '../types';
 import { Task } from '../model/Task';
 
 const createTask = async (taskInput: TaskInput): Promise<Task> => {
-    const existingTask = taskRepository.getAllTasks().find(t => t.title === taskInput.title);
+    const existingTask = taskRepository.getTaskByTitle(taskInput.title)
     if (existingTask) {
         throw new Error(`A task with the title "${taskInput.title}" already exists.`);
     }
@@ -12,16 +12,16 @@ const createTask = async (taskInput: TaskInput): Promise<Task> => {
       throw new Error(`Task creation failed. Please provide a valid id.`);
     }
 
-    const newTask = new Task(
-        taskInput.id,
-        taskInput.title,
-        taskInput.description,
-        taskInput.priority,
-        taskInput.deadline,
-        taskInput.status || 'not finished',
-        taskInput.tags,
-        taskInput.reminder
-    );
+    const newTask = new Task({
+        id: taskInput.id,
+        title: taskInput.title,
+        description: taskInput.description,
+        priority: taskInput.priority,
+        deadline: taskInput.deadline,
+        status: taskInput.status || 'not finished',
+        tags: taskInput.tags,
+        reminder: taskInput.reminder
+    });
 
     return taskRepository.createTask(newTask);
 };
@@ -43,7 +43,7 @@ const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => 
         throw new Error(`Task with ID ${updatedTaskInput.id} does not exist.`);
     }
     
-    if (existingTask.status === 'finished') {
+    if (existingTask.getStatus() === 'finished') {
         throw new Error('Completed tasks cannot be updated.');
     }
     
@@ -51,16 +51,16 @@ const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => 
         throw new Error('Updated task deadline must be in the future.');
     }
     
-    const updatedTask = new Task(
-        updatedTaskInput.id,
-        updatedTaskInput.title,
-        updatedTaskInput.description,
-        updatedTaskInput.priority,
-        updatedTaskInput.deadline,
-        updatedTaskInput.status,
-        existingTask.tags,
-        existingTask.reminder
-    );
+    const updatedTask = new Task({
+        id: updatedTaskInput.id,
+        title: updatedTaskInput.title,
+        description: updatedTaskInput.description,
+        priority: updatedTaskInput.priority,
+        deadline: updatedTaskInput.deadline,
+        status: updatedTaskInput.status,
+        tags: updatedTaskInput.tags,
+        reminder: existingTask.getReminder()
+    });
 
     return taskRepository.updateTask(updatedTask);
 };
@@ -71,7 +71,7 @@ const deleteTask = async (id: number): Promise<boolean> => {
         throw new Error(`Task with ID ${id} does not exist.`);
     }
 
-    if (existingTask.status === 'finished') {
+    if (existingTask.getStatus() === 'finished') {
         throw new Error('Completed tasks cannot be deleted.');
     }
 

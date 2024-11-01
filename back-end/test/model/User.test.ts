@@ -7,11 +7,11 @@ test('Given valid properties, when creating a User, then it should be created su
     const userEmail = 'john@example.com';
     const userPassword = 'password123';
     
-    const user = new User(userId, userName, userEmail, userPassword, []);
+    const user = new User({id: userId, name: userName, email: userEmail, password: userPassword, tasks: []});
 
     expect(user).toBeDefined();
-    expect(user.name).toBe(userName);
-    expect(user.email).toBe(userEmail);
+    expect(user.getName()).toBe(userName);
+    expect(user.getEmail()).toBe(userEmail);
 });
 
 test('Given an empty name, when creating a User, then it should throw an error', () => {
@@ -19,7 +19,7 @@ test('Given an empty name, when creating a User, then it should throw an error',
     const userEmail = 'john@example.com';
     const userPassword = 'password123';
 
-    expect(() => new User(userId, '', userEmail, userPassword, [])).toThrowError('Name is required.');
+    expect(() => {new User({id: userId,name: '', email: userEmail, password: userPassword, tasks: []})}).toThrowError('Name is required and cannot be empty.');
 });
 
 test('Given an invalid email, when creating a User, then it should throw an error', () => {
@@ -27,15 +27,15 @@ test('Given an invalid email, when creating a User, then it should throw an erro
     const userName = 'John Doe';
     const userPassword = 'password123';
     
-    expect(() => new User(userId, userName, '', userPassword, [])).toThrowError('Email is required');
+    expect(() => new User({id: userId, name: userName, email: '', password: userPassword, tasks: []})).toThrowError('A valid email is required.');
 });
 
 test('Given valid user and task, when adding a task to the user, then the task should be added successfully', () => {
-    const user = new User(1, 'John Doe', 'john@example.com', 'password123', []);
-    const task = new Task(1, 'Task 1', 'Description', 'medium', new Date(Date.now() + 10000), 'not finished', []);
+    const user = new User({id: 1, name: 'John Doe', email: 'john@example.com', password: 'password123', tasks: []});
+    const task = new Task({id: 1, title: 'Task 1', description: 'Description', priority: 'medium', deadline: new Date(Date.now() + 10000), status: 'not finished', tags:[]});
     
     user.addTask(task);
     
-    expect(user.tasks.length).toBe(1);
-    expect(user.tasks[0]).toBe(task);
+    expect(user.getTasks().length).toBe(1);
+    expect(user.getTasks()[0]).toBe(task);
   });

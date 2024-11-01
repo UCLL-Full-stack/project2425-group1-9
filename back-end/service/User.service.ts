@@ -3,23 +3,15 @@ import { UserInput } from '../types';
 import { User } from '../model/User';
 import { error } from 'console';
 
-const createUser = async (userInput: UserInput): Promise<User> => {
-    const existingUser = userRepository.findUserByName(userInput.name);
+const createUser = async ({id, name, email, password, tasks}: UserInput): Promise<User> => {
+    const existingUser = userRepository.findUserByName(name);
     if (existingUser) {
         throw new Error(`User creation failed. Please try a different name.`);
     }
 
-    if (userInput.id === undefined) {
-      throw new Error(`User creation failed. Please provide a valid id.`);
-    }
-
-    const newUser = new User(
-        userInput.id,
-        userInput.name,
-        userInput.email,
-        userInput.password,
-        userInput.tasks
-    );
+    const newUser = new User({
+        name, email, password, tasks
+    });
     return userRepository.createUser(newUser);
 };
 
@@ -31,22 +23,19 @@ const getAllUsers = async (): Promise<User[]> => {
     return userRepository.getAllUsers();
 };
 
-const updateUser = async (updatedUserInput: UserInput): Promise<User | null> => {
-    if (updatedUserInput.id === undefined) {
+const updateUser = async ({id, name, email, password, tasks}: UserInput): Promise<User | null> => {
+    if (id === undefined) {
         throw new Error('User ID is required for update.');
     }
 
-    const existingUser = userRepository.getUserById(updatedUserInput.id);
+    const existingUser = userRepository.getUserById(id);
     if (!existingUser) {
-        throw new Error(`User with ID ${updatedUserInput.id} does not exist.`);
+        throw new Error(`User with ID ${id} does not exist.`);
     }
 
-    const updatedUser = new User(
-        updatedUserInput.id,
-        updatedUserInput.name,
-        updatedUserInput.email,
-        updatedUserInput.password,
-        existingUser.tasks
+    const updatedUser = new User({
+        id, name, email, password, tasks
+    }
     );
     return userRepository.updateUser(updatedUser);
 };

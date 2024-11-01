@@ -1,17 +1,27 @@
 export class Tag {
-  constructor(
-    public id: number,
-    public name: string
-  ) {
-    this.validate();
+  private id?: number;
+  private name: string;
+
+  constructor(tag: { id?: number; name: string }) {
+    this.id = tag.id;
+    this.name = tag.name;
+    this.validate(tag.name);
   }
 
-  validate() {
-    if (!this.name) {
+  validate(name: string) {
+    if (!name) {
       throw new Error('Tag name is required.');
     }
-    if (this.name.length > 30) {
-      throw new Error('Tag name cannot exceed 30 characters');
+    if (name.length > 30) {
+      throw new Error('Tag name cannot exceed 30 characters.');
     }
+  }
+
+  getId(): number | undefined {
+    return this.id;
+  }
+
+  getName(): string {
+    return this.name;
   }
 }

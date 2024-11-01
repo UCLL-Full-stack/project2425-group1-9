@@ -1,18 +1,27 @@
 export class Reminder {
-  constructor(
-    public id: number,
-    public reminderTime: Date,
-    public taskId: number
-  ) {
-    this.validate();
+  private id?: number;
+  private reminderTime: Date;
+
+  constructor(reminder: { id?: number; reminderTime: Date }) {
+    this.id = reminder.id;
+    this.reminderTime = reminder.reminderTime;
+    this.validate(reminder.reminderTime);
   }
 
-  validate() {
-    if (!this.reminderTime) {
-      throw new Error('Reminder time is required');
+  validate(reminderTime: Date) {
+    if (!reminderTime) {
+      throw new Error('Reminder time is required.');
     }
-    if (this.reminderTime <= new Date()) {
-      throw new Error('Reminder time must be in the future');
+    if (reminderTime <= new Date()) {
+      throw new Error('Reminder time must be in the future.');
     }
+  }
+
+  getId(): number | undefined {
+    return this.id;
+  }
+
+  getReminderTime(): Date {
+    return this.reminderTime;
   }
 }
