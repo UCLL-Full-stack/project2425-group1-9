@@ -39,7 +39,7 @@ export class Task {
     if (!['low', 'medium', 'high'].includes(this.priority)) {
       throw new Error('Task priority must be one of: low, medium, or high.');
     }
-    if (!(this.deadline instanceof Date) || isNaN(this.deadline.getTime()) || this.deadline <= new Date()) {
+    if (this.deadline <= new Date()) {
       throw new Error('Deadline must be a valid future date.');
     }
     if (!this.status || typeof this.status !== 'string' || this.status.trim().length === 0) {
@@ -96,5 +96,9 @@ export class Task {
 
   getId(): number | undefined {
     return this.id
+  }
+  
+  getDeadline(): Date {
+    return this.deadline;
   }
 }

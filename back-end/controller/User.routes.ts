@@ -22,62 +22,11 @@
  *         password:
  *           type: string
  *           description: The password of the user.
+ *           writeOnly: true
  *         tasks:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Task'
- *     Task:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *           format: int64
- *         title:
- *           type: string
- *           description: The title of the task.
- *         description:
- *           type: string
- *           description: The description of the task.
- *         priority:
- *           type: string
- *           description: The priority of the task.
- *         deadline:
- *           type: date
- *           description: The deadline of the task.
- *         status:
- *            type: string  
- *            description: The status of the task.
- *         tags:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Tag'  
- *         reminders:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Reminder'  
- *     Tag:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *           format: int64
- *         name:
- *           type: string
- *           description: The name of the tag.
- *     Reminder:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *           format: int64
- *         reminderTime:
- *           type: string
- *           format: date-time
- *           description: The time for the reminder (ISO 8601 format).
- *         taskId:
- *           type: number
- *           format: int64
- *           description: The ID of the task associated with the reminder.
  */
 
 
@@ -99,14 +48,32 @@ const userRouter = express.Router();
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/ScheduleInput'
+ *              $ref: '#/components/schemas/User'
  *      responses:
- *         200:
- *            description: The created schedule.
+ *         201:
+ *            description: The created User.
  *            content:
  *              application/json:
  *                schema:
- *                  $ref: '#/components/schemas/Schedule'
+ *                  $ref: '#/components/schemas/User'
+ *         400:
+ *            description: Invalid input data.
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    error:
+ *                      type: string
+ *         409:
+ *            description: User already exists.
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    error:
+ *                      type: string
  */
 userRouter.post('/', async (req: Request, res: Response) => {
     try {
@@ -122,18 +89,32 @@ userRouter.post('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /users:
- *   get:
- *     summary: Get a list of all users.
- *     responses:
- *       200:
- *         description: A list of users.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                  $ref: '#/components/schemas/User'
+ * /users/{id}:
+ *  get:
+ *      summary: Get a user by id.
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *              type: integer
+ *              required: true
+ *              description: The user id.
+ *      responses:
+ *          200:
+ *              description: A User object.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *          404:
+ *              description: User not found.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                            error:
+ *                              type: string
  */
 userRouter.get('/', async (req: Request, res: Response) => {
     const users = await userService.getAllUsers();

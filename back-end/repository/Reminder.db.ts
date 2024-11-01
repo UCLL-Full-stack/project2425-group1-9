@@ -1,6 +1,9 @@
 import { Reminder } from '../model/Reminder';
 
-const reminders: Reminder[] = []; 
+const reminders: Reminder[] = [
+  new Reminder({ id: 1, reminderTime: new Date(Date.now() + 24 * 60 * 60 * 1000), taskId: 1}),
+  new Reminder({ id: 2, reminderTime: new Date(Date.now() + 48 * 60 * 60 * 1000), taskId: 2})
+]; 
 
 const createReminder = (reminder: Reminder): Reminder => {
   reminders.push(reminder);
@@ -8,7 +11,7 @@ const createReminder = (reminder: Reminder): Reminder => {
 };
 
 const getReminderById = (id: number): Reminder | null => {
-  return reminders.find(reminder => reminder.id === id) || null;
+  return reminders.find(reminder => reminder.getId() === id) || null;
 };
 
 const getAllReminders = (): Reminder[] => {
@@ -16,7 +19,7 @@ const getAllReminders = (): Reminder[] => {
 };
 
 const updateReminder = (updatedReminder: Reminder): Reminder | null => {
-  const index = reminders.findIndex(reminder => reminder.id === updatedReminder.id);
+  const index = reminders.findIndex(reminder => reminder.getId() === updatedReminder.getId());
   if (index > -1) {
     reminders[index] = updatedReminder;
     return updatedReminder;
@@ -25,7 +28,7 @@ const updateReminder = (updatedReminder: Reminder): Reminder | null => {
 };
 
 const deleteReminder = (id: number): boolean => {
-  const index = reminders.findIndex(reminder => reminder.id === id)
+  const index = reminders.findIndex(reminder => reminder.getId() === id)
   
   if (index > -1) {  
     reminders.splice(index, 1);  

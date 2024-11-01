@@ -1,10 +1,12 @@
 export class Reminder {
   private id?: number;
   private reminderTime: Date;
+  private taskId: number;
 
-  constructor(reminder: { id?: number; reminderTime: Date }) {
+  constructor(reminder: { id?: number; reminderTime: Date; taskId: number }) {
     this.id = reminder.id;
     this.reminderTime = reminder.reminderTime;
+    this.taskId = reminder.taskId
     this.validate(reminder.reminderTime);
   }
 
@@ -23,5 +25,9 @@ export class Reminder {
 
   getReminderTime(): Date {
     return this.reminderTime;
+  }
+
+  getTaskId(): number {
+    return this.taskId
   }
 }

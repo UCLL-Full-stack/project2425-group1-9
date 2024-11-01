@@ -51,7 +51,7 @@ test('Given a valid task and reminder, when adding a reminder to the task, then 
     status: 'not finished',
     tags: []
   });
-  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 5000)});
+  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 5000), taskId: 1});
 
   task.setReminder(reminder);
 
@@ -68,7 +68,7 @@ test('Given a reminder time after the task deadline, when adding the reminder, t
     status: 'not finished',
     tags: []
   });
-  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 10000)});
+  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 10000), taskId: 1});
 
   expect(() => task.setReminder(reminder)).toThrowError('Reminder time must be set before the task deadline.');
 });

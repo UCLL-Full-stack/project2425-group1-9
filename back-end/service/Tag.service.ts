@@ -16,7 +16,7 @@ const createTag = async (tagInput: TagInput): Promise<Tag> => {
       throw new Error(`Tag creation failed. Please provide a valid id.`);
     }
 
-    const newTag = new Tag(tagInput.id, tagInput.name);
+    const newTag = new Tag({id: tagInput.id, name: tagInput.name});
     return tagRepository.createTag(newTag);
 };
 

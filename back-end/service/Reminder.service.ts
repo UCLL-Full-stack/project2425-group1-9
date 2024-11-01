@@ -9,7 +9,7 @@ const createReminder = async (reminderInput: ReminderInput): Promise<Reminder> =
       throw new Error('Task not found');
     }
 
-    if (reminderInput.reminderTime >= task.deadline) {
+    if (reminderInput.reminderTime >= task.getDeadline()) {
         throw new Error('Reminder time must be set before the task deadline.');
     }
 
@@ -17,7 +17,7 @@ const createReminder = async (reminderInput: ReminderInput): Promise<Reminder> =
       throw new Error(`Reminder creation failed. Please provide a valid id.`);
     }
 
-    const newReminder = new Reminder(reminderInput.id, reminderInput.reminderTime, reminderInput.taskId);
+    const newReminder = new Reminder({id: reminderInput.id, reminderTime: reminderInput.reminderTime, taskId: reminderInput.taskId});
     return reminderRepository.createReminder(newReminder);
 };
 
