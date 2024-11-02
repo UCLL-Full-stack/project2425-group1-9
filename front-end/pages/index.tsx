@@ -134,4 +134,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Home;  // kheb voorlopig alle comments ff laten staan eh x
