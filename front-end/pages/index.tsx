@@ -78,6 +78,29 @@ const Home: React.FC = () => {
     setAddingTask(false); // Sluit het toevoegen van de taak af zonder deze op te slaan
   };
 
+  const handleUpdateTask = async (updatedTask: Task) => {
+    try {
+      const response = await fetch(`http://localhost:3000/tasks/${updatedTask.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedTask),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      const newTask = await response.json();
+      setTasks(prevTasks => 
+        prevTasks.map(task => (task.id === newTask.id ? newTask : task))
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+    }
+  };
+
   return (
     <>
       <Head>
@@ -100,7 +123,7 @@ const Home: React.FC = () => {
             ) : (
               <button onClick={() => setAddingTask(true)}>Add New Task</button>
             )}
-            <TaskList tasks={tasks} />
+            <TaskList tasks={tasks} onUpdate={handleUpdateTask} />
             <p>
               Here you can see all your tasks. You can add, edit, or remove tasks as needed.
             </p>
