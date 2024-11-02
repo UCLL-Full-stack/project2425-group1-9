@@ -1,0 +1,12 @@
+/* styles/header.module.css */
+.header {
+    background-color: #f8f9fa; /* Een lichte achtergrondkleur */
+    padding: 1rem; /* Wat padding om ruimte te creëren */
+    text-align: center; /* Centraal uitlijnen van de tekst */
+  }
+  
+  .header a {
+    margin: 0 15px; /* Wat ruimte tussen de links */
+    text-decoration: none; /* Geen onderstreping voor de links */
+    color: #0070f3; /* Een blauwe kleur voor de links */
+  }

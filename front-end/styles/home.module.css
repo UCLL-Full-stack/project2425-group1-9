@@ -1,0 +1,23 @@
+/* styles/home.module.css */
+.main {
+    padding: 20px; /* Voorzien van wat padding */
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse; /* Zorgt ervoor dat de randen samenkomen */
+}
+
+.table th, .table td {
+    border: 1px solid #ccc; /* Rand om de cellen */
+    padding: 10px; /* Binnenruimte voor cellen */
+    text-align: left; /* Tekst links uitlijnen */
+}
+
+.table th {
+    background-color: #f2f2f2; /* Achtergrondkleur voor de kop */
+}
+
+.table tbody tr:hover {
+    background-color: #e6f7ff; /* Hover-effect voor rijen */
+}
