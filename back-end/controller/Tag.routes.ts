@@ -54,6 +54,33 @@ tagRouter.post('/', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * @swagger
+ * /tags:
+ *  get:
+ *      summary: Get all tags.
+ *      responses:
+ *          200:
+ *              description: An array of Tag objects.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Tag'
+ *          404:
+ *              description: Tag not found.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                            error:
+ *                              type: string
+ */
+tagRouter.get('/', async (req: Request, res: Response) => {
+    const users = await tagService.getAllTags();
+    res.status(200).json(users);
+});
+
 
 
 /**

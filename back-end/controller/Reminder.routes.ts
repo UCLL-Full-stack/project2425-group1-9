@@ -31,7 +31,7 @@ const reminderRouter = express.Router();
 
 /**
  * @swagger
- * /tasks:
+ * /reminders:
  *   post:
  *      summary: Create a new task.
  *      requestBody:
@@ -63,7 +63,7 @@ reminderRouter.post('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /reminders/{id}:
  *   delete:
  *     summary: Delete a task by id.
  *     parameters:

@@ -6,6 +6,8 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import {userRouter} from './controller/User.routes';
 import {taskRouter} from './controller/Task.routes';
+import { reminderRouter } from './controller/Reminder.routes';
+import { tagRouter } from './controller/Tag.routes';
 
 
 const app = express();
@@ -17,6 +19,8 @@ app.use(bodyParser.json());
 
 app.use('/users', userRouter); 
 app.use('/tasks', taskRouter);
+app.use('/tags', tagRouter); 
+app.use('/reminders', reminderRouter);
 
 app.get('/status', (req, res) => {
     res.json({ message: 'Courses API is running...' });

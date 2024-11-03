@@ -7,10 +7,7 @@ const createTask = async (taskInput: TaskInput): Promise<Task> => {
     if (existingTask) {
         throw new Error(`A task with the title "${taskInput.title}" already exists.`);
     }
-
-    if (taskInput.id === undefined) {
-      throw new Error(`Task creation failed. Please provide a valid id.`);
-    }
+    
 
     const newTask = new Task({
         id: taskInput.id,

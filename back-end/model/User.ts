@@ -60,5 +60,9 @@ export class User {
   getEmail() {
     return this.email
   }
+
+  getPassword() {
+    return this.password
+  }
   
 }

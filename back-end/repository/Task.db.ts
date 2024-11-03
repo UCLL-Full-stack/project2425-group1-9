@@ -2,7 +2,7 @@ import { Task } from '../model/Task';
 import TagDb from './Tag.db';
 import ReminderDb from './Reminder.db';
 
-const tasksForJohn: Task[] = [ 
+const tasks: Task[] = [ 
   new Task({
     id: 1,
     title: 'Complete project report',
@@ -23,9 +23,7 @@ const tasksForJohn: Task[] = [
     tags: [TagDb.getAllTags()[1]], 
     reminder: ReminderDb.getAllReminders()[1] 
   }),
-];
 
-const tasksForJane: Task[] = [ 
   new Task({
     id: 3,
     title: 'Prepare for meeting',
@@ -37,7 +35,6 @@ const tasksForJane: Task[] = [
   }),
 ];
 
-const tasks: Task[] = [...tasksForJohn, ...tasksForJane]; 
 
 const createTask = (task: Task): Task => {
   tasks.push(task);

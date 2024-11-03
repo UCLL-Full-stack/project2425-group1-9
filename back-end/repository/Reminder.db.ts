@@ -1,8 +1,8 @@
 import { Reminder } from '../model/Reminder';
 
 const reminders: Reminder[] = [
-  new Reminder({ id: 1, reminderTime: new Date(Date.now() + 24 * 60 * 60 * 1000), taskId: 1}),
-  new Reminder({ id: 2, reminderTime: new Date(Date.now() + 48 * 60 * 60 * 1000), taskId: 2})
+  new Reminder({ id: 1, reminderTime: new Date(Date.now() + 24 * 60 * 60 * 1000)}),
+  new Reminder({ id: 2, reminderTime: new Date(Date.now() + 48 * 60 * 60 * 1000)})
 ]; 
 
 const createReminder = (reminder: Reminder): Reminder => {

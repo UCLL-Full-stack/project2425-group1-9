@@ -89,19 +89,12 @@ userRouter.post('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /users:
  *  get:
- *      summary: Get a user by id.
- *      parameters:
- *          - in: path
- *            name: id
- *            schema:
- *              type: integer
- *              required: true
- *              description: The user id.
+ *      summary: Get all users.
  *      responses:
  *          200:
- *              description: A User object.
+ *              description: An array of User objects.
  *              content:
  *                  application/json:
  *                      schema:

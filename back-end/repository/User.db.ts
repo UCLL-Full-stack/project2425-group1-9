@@ -53,11 +53,17 @@ const deleteUser = (id: number): boolean => {
   return false;
 };
 
+const findUserByEmail = (email: string): User | null => {
+  return users.find(user => user.getEmail() === email) || null;
+};
+
 export default {
   createUser,
   getUserById,
   getAllUsers,
   updateUser,
   deleteUser,
-  findUserByName
+  findUserByName,
+  findUserByEmail,
 };
+
