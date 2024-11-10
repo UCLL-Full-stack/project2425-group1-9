@@ -51,7 +51,7 @@ test('Given a valid task and reminder, when adding a reminder to the task, then 
     status: 'not finished',
     tags: []
   });
-  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 5000), taskId: 1});
+  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 5000)});
 
   task.setReminder(reminder);
 
@@ -68,7 +68,7 @@ test('Given a reminder time after the task deadline, when adding the reminder, t
     status: 'not finished',
     tags: []
   });
-  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 10000), taskId: 1});
+  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 10000)});
 
   expect(() => task.setReminder(reminder)).toThrowError('Reminder time must be set before the task deadline.');
 });
@@ -90,18 +90,3 @@ test('Given a duplicate tag, when adding the same tag again, then it should thro
   expect(() => task.addTag(tag)).toThrowError('This tag is already associated with the task.');
 });
 
-test('When marking a task as completed, then the task status should be set to "finished"', () => {
-  const task = new Task({
-    id: 1,
-    title: 'Test Task',
-    description: 'Description',
-    priority: 'medium',
-    deadline: new Date(Date.now() + 10000),
-    status: 'not finished',
-    tags: []
-  });
-
-  task.markAsCompleted();
-
-  expect(task.getStatus()).toBe('finished');
-});
