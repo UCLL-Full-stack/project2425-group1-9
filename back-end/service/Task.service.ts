@@ -32,31 +32,32 @@ const getAllTasks = async (): Promise<Task[]> => {
 };
 
 const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => {
-  if (updatedTaskInput.id === undefined) {
-      throw new Error(`Task creation failed. Please provide a valid id.`);
+    if (updatedTaskInput.id === undefined) {
+        throw new Error(`Task update failed. Please provide a valid id.`);
     }
-    const existingTask = taskRepository.getTaskById(updatedTaskInput.id);
+
+    const existingTask = await taskRepository.getTaskById(updatedTaskInput.id);
     if (!existingTask) {
         throw new Error(`Task with ID ${updatedTaskInput.id} does not exist.`);
     }
-    
-    if (existingTask.getStatus() === 'finished') {
+
+    if (existingTask.getStatus() === 'finished' && updatedTaskInput.status === 'finished') {
         throw new Error('Completed tasks cannot be updated.');
     }
-    
-    if (updatedTaskInput.deadline <= new Date()) {
+
+    if (updatedTaskInput.deadline && updatedTaskInput.deadline <= new Date()) {
         throw new Error('Updated task deadline must be in the future.');
     }
-    
+
     const updatedTask = new Task({
         id: updatedTaskInput.id,
-        title: updatedTaskInput.title,
-        description: updatedTaskInput.description,
-        priority: updatedTaskInput.priority,
-        deadline: updatedTaskInput.deadline,
-        status: updatedTaskInput.status,
-        tags: updatedTaskInput.tags,
-        reminder: existingTask.getReminder()
+        title: updatedTaskInput.title || existingTask.getTitle(),
+        description: updatedTaskInput.description || existingTask.getDescription(),
+        priority: updatedTaskInput.priority || existingTask.getPriority(),
+        deadline: updatedTaskInput.deadline || existingTask.getDeadline(),
+        status: updatedTaskInput.status || existingTask.getStatus(), // Update status if provided
+        tags: updatedTaskInput.tags || existingTask.getTags(),
+        reminder: existingTask.getReminder() || undefined, // Keep the existing reminder
     });
 
     return taskRepository.updateTask(updatedTask);

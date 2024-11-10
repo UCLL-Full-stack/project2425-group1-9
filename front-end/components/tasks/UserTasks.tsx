@@ -16,9 +16,9 @@ const UserTasks: React.FC<Props> = ({ user }: Props) => {
             <th scope="col">Description</th>
             <th scope="col">Priority</th>
             <th scope="col">Deadline</th>
-            <th scope="col">Status</th>
             <th scope="col">Tags</th>
             <th scope="col">Reminder</th>
+            <th scope="col">Status</th>
           </tr>
         </thead>
         <tbody>

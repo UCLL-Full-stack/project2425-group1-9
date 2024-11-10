@@ -18,10 +18,7 @@ const Users: React.FC = () => {
       console.error('Error fetching users:', error);
     }
   };
-
-  const addTask = (userId: number) => {
-    console.log(`Add task for user with ID: ${userId}`);
-  };
+  
 
   useEffect(() => {
     getUsers();
@@ -40,7 +37,6 @@ const Users: React.FC = () => {
           <UserOverViewTable
             users={users}
             selectUser={setSelectedUser} 
-            addTask={addTask} 
           />
           {selectedUser && (
             <UserTasks user={selectedUser} />

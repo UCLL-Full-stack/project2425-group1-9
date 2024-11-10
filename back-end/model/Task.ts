@@ -75,15 +75,15 @@ export class Task {
     if (reminder.getReminderTime() >= this.deadline) {
       throw new Error('Reminder time must be set before the task deadline.');
     }
+
+    if (this.reminder) {
+      throw new Error("Task already has a reminder set.")
+    }
     this.reminder = reminder;
   }
 
   getReminder(): Reminder | undefined{
     return this.reminder;
-  }
-
-  markAsCompleted() {
-    this.status = 'finished';
   }
 
   getStatus(): string {
@@ -100,5 +100,13 @@ export class Task {
   
   getDeadline(): Date {
     return this.deadline;
+  }
+
+  getDescription(): string {
+    return this.description;
+  }
+
+  getPriority(): string {
+    return this.priority;
   }
 }
