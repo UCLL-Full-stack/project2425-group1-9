@@ -3,14 +3,14 @@ import { UserInput } from '../types';
 import { User } from '../model/User';
 import { error } from 'console';
 
-const createUser = async ({id, name, email, password, tasks}: UserInput): Promise<User> => {
+const createUser = async ({id, name, email, password}: UserInput): Promise<User> => {
     const existingUser = userRepository.findUserByName(name);
     if (existingUser) {
         throw new Error(`User creation failed. Please try a different name.`);
     }
 
     const newUser = new User({
-        name, email, password, tasks
+        id, name, email, password
     });
     return userRepository.createUser(newUser);
 };
@@ -23,7 +23,7 @@ const getAllUsers = async (): Promise<User[]> => {
     return userRepository.getAllUsers();
 };
 
-const updateUser = async ({id, name, email, password, tasks}: UserInput): Promise<User | null> => {
+const updateUser = async ({id, name, email, password}: UserInput): Promise<User | null> => {
     if (id === undefined) {
         throw new Error('User ID is required for update.');
     }
@@ -34,7 +34,7 @@ const updateUser = async ({id, name, email, password, tasks}: UserInput): Promis
     }
 
     const updatedUser = new User({
-        id, name, email, password, tasks
+        id, name, email, password
     }
     );
     return userRepository.updateUser(updatedUser);

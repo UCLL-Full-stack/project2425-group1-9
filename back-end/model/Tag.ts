@@ -1,3 +1,5 @@
+import { Tag as TagPrisma } from '@prisma/client';
+
 export class Tag {
   private id?: number;
   private name: string;
@@ -24,4 +26,11 @@ export class Tag {
   getName(): string {
     return this.name;
   }
+
+  static from({id, name}: TagPrisma): Tag {
+        return new Tag({
+            id,
+            name
+        });
+    }
 }

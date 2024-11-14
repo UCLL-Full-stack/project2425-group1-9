@@ -1,23 +1,22 @@
 import {Task} from '../model/Task'
+import { Task as TaskPrisma, User as UserPrisma} from '@prisma/client';
+
 export class User {
   private id?: number;
   private name: string;
   private email: string;
   private password: string;
-  private tasks: Task[];
 
   constructor(user: {
     id?: number;
     name: string;
     email: string;
     password: string;
-    tasks: Task[];
   }) {
     this.id = user.id;
     this.name = user.name;
     this.email = user.email;
     this.password = user.password;
-    this.tasks = user.tasks || [];
     this.validate();
   }
 
@@ -32,22 +31,9 @@ export class User {
     if (!this.password || typeof this.password !== 'string' || this.password.length < 6) {
       throw new Error('Password is required and must be at least 6 characters long.');
     }
-    if (!Array.isArray(this.tasks) || this.tasks.some(task => !(task instanceof Task))) {
-      throw new Error('Tasks must be an array of Task instances.');
-    }
+    
 }
-
- 
-  addTask(task: Task) {
-    if (!task) {
-      throw new Error('Task is required.');
-    }
-    this.tasks.push(task);
-  }
-
-  getTasks() {
-    return this.tasks;
-  }
+  
 
   getId() {
     return this.id
@@ -65,4 +51,17 @@ export class User {
     return this.password
   }
   
+  static from({
+        id,
+        name,
+        email,
+        password,
+    }: UserPrisma ) {
+        return new User({
+          id,
+          name,
+          email,
+          password,
+        });
+    }
 }

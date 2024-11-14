@@ -1,39 +1,8 @@
 import { Task } from '../model/Task';
 import TagDb from './Tag.db';
 import ReminderDb from './Reminder.db';
+import database from './database';
 
-const tasks: Task[] = [ 
-  new Task({
-    id: 1,
-    title: 'Complete project report',
-    description: 'Finish the quarterly project report.',
-    priority: 'high',
-    deadline: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
-    status: 'not finished',
-    tags: [TagDb.getAllTags()[0], TagDb.getAllTags()[1]], 
-    reminder: ReminderDb.getAllReminders()[0] 
-  }),
-  new Task({
-    id: 2,
-    title: 'Grocery shopping',
-    description: 'Buy groceries for the week.',
-    priority: 'medium',
-    deadline: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
-    status: 'not finished',
-    tags: [TagDb.getAllTags()[1]], 
-    reminder: ReminderDb.getAllReminders()[1] 
-  }),
-
-  new Task({
-    id: 3,
-    title: 'Prepare for meeting',
-    description: 'Prepare slides for the upcoming client meeting.',
-    priority: 'high',
-    deadline: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
-    status: 'not finished',
-    tags: [TagDb.getAllTags()[2]]
-  }),
-];
 
 
 const createTask = (task: Task): Task => {
@@ -49,8 +18,11 @@ const getTaskByTitle = (title: string): Task | null => {
   return tasks.find(task => task.getTitle() === title) || null
 }
 
-const getAllTasks = (): Task[] => {
-  return tasks;
+const getAllTasks = async (): Promise<Task[]> => {
+  const taskPrisma = await database.task.findMany({
+            include: {tags: true, reminder: true, user: true}
+        })
+        return taskPrisma.map((taskPrisma) => Task.from(taskPrisma));
 };
 
 const updateTask = (updatedTask: Task): Task | null => {

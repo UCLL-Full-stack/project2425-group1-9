@@ -7,9 +7,9 @@ import UserOverViewTable from '../../components/users/UserOverview';
 import UserTasks from '@/components/tasks/UserTasks';
 
 const Users: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]); 
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    
+
   const getUsers = async () => {
     try {
       const data = await userService.getAllUsers();
@@ -18,11 +18,17 @@ const Users: React.FC = () => {
       console.error('Error fetching users:', error);
     }
   };
-  
 
   useEffect(() => {
     getUsers();
   }, []);
+
+  const handleUpdateUser = (updatedUser: User) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    );
+    setSelectedUser(updatedUser); // Update the currently selected user
+  };
 
   return (
     <>
@@ -34,12 +40,9 @@ const Users: React.FC = () => {
         <h1>Users</h1>
         <section>
           <h2>Users overview</h2>
-          <UserOverViewTable
-            users={users}
-            selectUser={setSelectedUser} 
-          />
+          <UserOverViewTable users={users} selectUser={setSelectedUser} />
           {selectedUser && (
-            <UserTasks user={selectedUser} />
+            <UserTasks user={selectedUser} onUpdateUser={handleUpdateUser} />
           )}
         </section>
       </main>
@@ -48,3 +51,4 @@ const Users: React.FC = () => {
 };
 
 export default Users;
+

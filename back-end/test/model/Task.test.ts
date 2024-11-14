@@ -1,8 +1,16 @@
 import { Task } from '../../model/Task';
 import { Reminder } from '../../model/Reminder';
 import { Tag } from '../../model/Tag';
+import { User } from '../../model/User';
 
 test('Given valid properties, when creating a Task, then it should be created successfully', () => {
+  const user = new User({
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+    password: 'password123'
+  });
+
   const task = new Task({
     id: 1,
     title: 'Test Task',
@@ -10,7 +18,9 @@ test('Given valid properties, when creating a Task, then it should be created su
     priority: 'medium',
     deadline: new Date(Date.now() + 10000),
     status: 'not finished',
-    tags: []
+    tags: [],
+    reminder: undefined, // No reminder for this test
+    user: user
   });
 
   expect(task).toBeDefined();
@@ -18,6 +28,13 @@ test('Given valid properties, when creating a Task, then it should be created su
 });
 
 test('Given an empty title, when creating a Task, then it should throw an error', () => {
+  const user = new User({
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+    password: 'password123'
+  });
+
   expect(() => new Task({
     id: 1,
     title: '',
@@ -25,11 +42,20 @@ test('Given an empty title, when creating a Task, then it should throw an error'
     priority: 'medium',
     deadline: new Date(Date.now() + 10000),
     status: 'not finished',
-    tags: []
+    tags: [],
+    reminder: undefined,
+    user: user
   })).toThrowError('Task title is required and cannot be empty.');
 });
 
 test('Given a past deadline, when creating a Task, then it should throw an error', () => {
+  const user = new User({
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+    password: 'password123'
+  });
+
   expect(() => new Task({
     id: 1,
     title: 'Test Task',
@@ -37,11 +63,20 @@ test('Given a past deadline, when creating a Task, then it should throw an error
     priority: 'medium',
     deadline: new Date(Date.now() - 10000),
     status: 'not finished',
-    tags: []
+    tags: [],
+    reminder: undefined,
+    user: user
   })).toThrowError('Deadline must be a valid future date.');
 });
 
 test('Given a valid task and reminder, when adding a reminder to the task, then the reminder should be added successfully', () => {
+  const user = new User({
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+    password: 'password123'
+  });
+
   const task = new Task({
     id: 1,
     title: 'Test Task',
@@ -49,16 +84,25 @@ test('Given a valid task and reminder, when adding a reminder to the task, then 
     priority: 'medium',
     deadline: new Date(Date.now() + 10000),
     status: 'not finished',
-    tags: []
+    tags: [],
+    reminder: undefined,
+    user: user
   });
-  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 5000)});
-
+  
+  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 5000) });
   task.setReminder(reminder);
 
   expect(task.getReminder()).toBe(reminder);
 });
 
 test('Given a reminder time after the task deadline, when adding the reminder, then it should throw an error', () => {
+  const user = new User({
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+    password: 'password123'
+  });
+
   const task = new Task({
     id: 1,
     title: 'Test Task',
@@ -66,14 +110,27 @@ test('Given a reminder time after the task deadline, when adding the reminder, t
     priority: 'medium',
     deadline: new Date(Date.now() + 5000),
     status: 'not finished',
-    tags: []
+    tags: [],
+    reminder: undefined,
+    user: user
   });
-  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 10000)});
+  
+  const reminder = new Reminder({ id: 1, reminderTime: new Date(Date.now() + 10000) });
 
-  expect(() => task.setReminder(reminder)).toThrowError('Reminder time must be set before the task deadline.');
+  expect(() => task.setReminder(reminder)).toThrowError('Reminder time must be before the task deadline.');
 });
 
-test('Given a duplicate tag, when adding the same tag again, then it should throw an error', () => {
+test('Given a task with duplicate tags, when adding the tags, then it should throw an error', () => {
+  const user = new User({
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+    password: 'password123'
+  });
+
+  const tag1 = new Tag({ id: 1, name: 'Important' });
+  const tag2 = new Tag({ id: 1, name: 'Important' }); // Duplicate tag
+
   const task = new Task({
     id: 1,
     title: 'Test Task',
@@ -81,12 +138,10 @@ test('Given a duplicate tag, when adding the same tag again, then it should thro
     priority: 'medium',
     deadline: new Date(Date.now() + 10000),
     status: 'not finished',
-    tags: []
+    tags: [tag1],
+    reminder: undefined,
+    user: user
   });
-  const tag = new Tag({ id: 1, name: 'Urgent' });
 
-  task.addTag(tag);
-
-  expect(() => task.addTag(tag)).toThrowError('This tag is already associated with the task.');
+  expect(() => task.addTag(tag2)).toThrowError('Tag already exists in the task.');
 });
-

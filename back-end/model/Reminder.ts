@@ -1,3 +1,5 @@
+import { Reminder as ReminderPrisma} from '@prisma/client';
+
 export class Reminder {
   private id?: number;
   private reminderTime: Date;
@@ -25,5 +27,12 @@ export class Reminder {
     return this.reminderTime;
   }
 
-  
+  static from({id, reminderTime}: ReminderPrisma): Reminder {
+        return new Reminder({
+            id,
+            reminderTime
+        });
+    }
 }
+  
+

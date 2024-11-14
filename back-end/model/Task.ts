@@ -1,25 +1,29 @@
 import { Tag } from './Tag'
 import { Reminder } from './Reminder'; 
+import { Task as TaskPrisma, Reminder as ReminderPrisma, Tag as TagPrisma, User as UserPrisma} from '@prisma/client';
+import { User } from './User';
 
 export class Task {
   private id?: number;
   private title: string;
   private description: string;
-  private priority: 'low' | 'medium' | 'high';
+  private priority: string;
   private deadline: Date;
   private status: string;
   private tags: Tag[];
   private reminder?: Reminder;
+  private user: User;
 
   constructor(task: {
     id?: number;
     title: string;
     description: string;
-    priority: 'low' | 'medium' | 'high';
+    priority: string
     deadline: Date;
     status: string;
     tags: Tag[];
     reminder?: Reminder;
+    user: User;
   }) {
     this.id = task.id;
     this.title = task.title;
@@ -29,6 +33,7 @@ export class Task {
     this.status = task.status;
     this.tags = task.tags;
     this.reminder = task.reminder;
+    this.user = task.user;
     this.validate();
   }
 
@@ -109,4 +114,36 @@ export class Task {
   getPriority(): string {
     return this.priority;
   }
+
+  getUser(): User {
+    return this.user
+  }
+
+  static from({
+        id,
+        title,
+        description,
+        priority,
+        deadline,
+        status,
+        tags,
+        reminder,
+        user
+    }: TaskPrisma & {
+        tags: TagPrisma[];
+        reminder: ReminderPrisma | null;
+        user: UserPrisma;
+    }) {
+        return new Task({
+            id,
+            title,
+            description,
+            priority,
+            deadline,
+            status,
+            tags: tags.map((tag) => Tag.from(tag)),
+            reminder: reminder ? Reminder.from(reminder) : undefined, // Handle null case
+            user: User.from(user)
+        });
+    }
 }

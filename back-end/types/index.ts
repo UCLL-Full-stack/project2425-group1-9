@@ -1,13 +1,12 @@
+import { Tag, User } from "@prisma/client";
 import { Reminder } from "../model/Reminder";
 
-type UserRole = 'admin' | 'user'
 
 type UserInput = {
     id?: number;            
     name: string;            
     email: string;           
     password: string; 
-    tasks: [];     
 };
 
 
@@ -25,11 +24,12 @@ type TaskInput = {
     id?: number;            
     title: string;           
     description: string;    
-    priority: 'low' | 'medium' | 'high';
+    priority: string;
     deadline: Date;          
-    status: 'not finished' | 'finished';
-    tags: []     
-    reminder?: Reminder; 
+    status: string;
+    tags: TagInput[]
+    reminder?: ReminderInput; 
+    user: UserInput
 };
 
 

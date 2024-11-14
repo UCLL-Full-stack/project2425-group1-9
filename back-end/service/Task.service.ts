@@ -1,23 +1,32 @@
 import taskRepository from '../repository/Task.db';
 import { TaskInput } from '../types'; 
 import { Task } from '../model/Task';
+import { User } from '../model/User';
+import { Tag } from '../model/Tag';
+import { Reminder } from '../model/Reminder';
 
-const createTask = async (taskInput: TaskInput): Promise<Task> => {
-    const existingTask = taskRepository.getTaskByTitle(taskInput.title)
+const createTask = async ({id, title, description, priority, deadline, status, tags, reminder, user }: TaskInput): Promise<Task> => {
+    const existingTask = taskRepository.getTaskByTitle(title);
     if (existingTask) {
-        throw new Error(`A task with the title "${taskInput.title}" already exists.`);
+        throw new Error(`A task with the title "${title}" already exists.`);
     }
-    
+
+    const tagInstances = tags.map(tagInput => new Tag(tagInput));
+
+    const reminderInstance = reminder ? new Reminder(reminder) : undefined;
+
+    const userInstance = new User(user);
 
     const newTask = new Task({
-        id: taskInput.id,
-        title: taskInput.title,
-        description: taskInput.description,
-        priority: taskInput.priority,
-        deadline: taskInput.deadline,
-        status: taskInput.status || 'not finished',
-        tags: taskInput.tags,
-        reminder: taskInput.reminder
+        id,
+        title,
+        description,
+        priority,
+        deadline,
+        status: status || 'not finished',
+        tags: tagInstances, 
+        reminder: reminderInstance, 
+        user: userInstance 
     });
 
     return taskRepository.createTask(newTask);
@@ -32,6 +41,7 @@ const getAllTasks = async (): Promise<Task[]> => {
 };
 
 const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => {
+
     if (updatedTaskInput.id === undefined) {
         throw new Error(`Task update failed. Please provide a valid id.`);
     }
@@ -41,13 +51,13 @@ const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => 
         throw new Error(`Task with ID ${updatedTaskInput.id} does not exist.`);
     }
 
-    if (existingTask.getStatus() === 'finished' && updatedTaskInput.status === 'finished') {
-        throw new Error('Completed tasks cannot be updated.');
-    }
-
     if (updatedTaskInput.deadline && updatedTaskInput.deadline <= new Date()) {
         throw new Error('Updated task deadline must be in the future.');
     }
+    
+    const userInstance = new User(updatedTaskInput.user);
+    const tagInstances = updatedTaskInput.tags.map(tagInput => new Tag(tagInput));
+
 
     const updatedTask = new Task({
         id: updatedTaskInput.id,
@@ -55,9 +65,10 @@ const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => 
         description: updatedTaskInput.description || existingTask.getDescription(),
         priority: updatedTaskInput.priority || existingTask.getPriority(),
         deadline: updatedTaskInput.deadline || existingTask.getDeadline(),
-        status: updatedTaskInput.status || existingTask.getStatus(), // Update status if provided
-        tags: updatedTaskInput.tags || existingTask.getTags(),
-        reminder: existingTask.getReminder() || undefined, // Keep the existing reminder
+        status: updatedTaskInput.status || existingTask.getStatus(), 
+        tags: tagInstances || existingTask.getTags(),
+        reminder: existingTask.getReminder(), 
+        user: userInstance
     });
 
     return taskRepository.updateTask(updatedTask);
