@@ -4,15 +4,15 @@ import { Task as TaskPrisma, Reminder as ReminderPrisma, Tag as TagPrisma, User 
 import { User } from './User';
 
 export class Task {
-  private id?: number;
-  private title: string;
-  private description: string;
-  private priority: string;
-  private deadline: Date;
-  private status: string;
-  private tags: Tag[];
-  private reminder?: Reminder;
-  private user: User;
+  readonly id?: number;
+  readonly title: string;
+  readonly description: string;
+  readonly priority: string;
+  readonly deadline: Date;
+  readonly status: string;
+  readonly tags: Tag[];
+  readonly reminder?: Reminder;
+  readonly user: User;
 
   constructor(task: {
     id?: number;
@@ -55,37 +55,10 @@ export class Task {
     }
 }
 
-
-  addTag(tag: Tag) {
-    if (!tag) {
-      throw new Error('Tag is required.');
-    }
-    
-    const exists = this.tags.some(existingTag => existingTag.getId() === tag.getId());
-    if (exists) {
-      throw new Error('This tag is already associated with the task.');
-    }
-    
-    this.tags.push(tag);
-  }
-
   getTags(): Tag[] {
     return this.tags;
   }
-
-  setReminder(reminder: Reminder) {
-    if (!reminder) {
-      throw new Error('Reminder is required.');
-    }
-    if (reminder.getReminderTime() >= this.deadline) {
-      throw new Error('Reminder time must be set before the task deadline.');
-    }
-
-    if (this.reminder) {
-      throw new Error("Task already has a reminder set.")
-    }
-    this.reminder = reminder;
-  }
+  
 
   getReminder(): Reminder | undefined{
     return this.reminder;
@@ -142,7 +115,7 @@ export class Task {
             deadline,
             status,
             tags: tags.map((tag) => Tag.from(tag)),
-            reminder: reminder ? Reminder.from(reminder) : undefined, // Handle null case
+            reminder: reminder ? Reminder.from(reminder) : undefined, 
             user: User.from(user)
         });
     }

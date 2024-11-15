@@ -1,8 +1,8 @@
 import { Tag as TagPrisma } from '@prisma/client';
 
 export class Tag {
-  private id?: number;
-  private name: string;
+  readonly id?: number;
+  readonly name: string;
 
   constructor(tag: { id?: number; name: string }) {
     this.id = tag.id;

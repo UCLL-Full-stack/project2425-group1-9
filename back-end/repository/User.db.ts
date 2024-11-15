@@ -1,69 +1,106 @@
 import { User } from '../model/User';
-import TaskDb from './Task.db';
+import database from './database';
 
-const users: User[] = [
-  new User({
-    id: 1,
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    password: 'john123',
-    tasks: [TaskDb.getAllTasks()[0], TaskDb.getAllTasks()[1]]
-  }),
-  new User({
-    id: 2,
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    password: 'jane123',
-    tasks: [TaskDb.getAllTasks()[1]]
-  }),
-];
-
-const createUser = (user: User): User => {
-  users.push(user);
-  return user;
-};
-
-const getUserById = (id: number): User | null => {
-  return users.find(user => user.getId() === id) || null;
-};
-
-const getAllUsers = (): User[] => {
-  return users;
-};
-
-const findUserByName = (name: string): User | null => {
-  return users.find(user => user.getName() === name) || null;
-};
-
-const updateUser = (updatedUser: User): User | null => {
-  const index = users.findIndex(user => user.getId() === updatedUser.getId());
-  if (index > -1) {
-    users[index] = updatedUser;
-    return updatedUser;
+const createUser  = async ({ name, email, password }: User): Promise<User> => {
+  try {
+    const createdUser  = await database.user.create({
+      data: {
+        name,
+        email,
+        password,
+      },
+    });
+    return User.from(createdUser );
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
   }
-  return null;
 };
 
-const deleteUser = (id: number): boolean => {
-  const index = users.findIndex(user => user.getId() === id);
-  if (index > -1) {
-    users.splice(index, 1);
+const getUserById = async ({id}: {id: number}): Promise<User | null> => {
+  try {
+    const userPrisma = await database.user.findUnique({
+      where: { id: id },
+      include: { tasks: true }, 
+    });
+    return userPrisma ? User.from(userPrisma) : null;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+const getAllUsers = async (): Promise<User[]> => {
+  try {
+    const usersPrisma = await database.user.findMany({
+      include: { tasks: true }, 
+    });
+    return usersPrisma.map((userPrisma) => User.from(userPrisma));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+const updateUser  = async ({ id, name, email, password }: User): Promise<User | null> => {
+  try {
+    const userPrisma = await database.user.update({
+      where: { id },
+      data: {
+        name,
+        email,
+        password,
+      },
+    });
+    return User.from(userPrisma);
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+const deleteUser  = async (id: number): Promise<boolean> => {
+  try {
+    await database.user.delete({
+      where: { id },
+    });
     return true;
+  } catch (error) {
+    console.error(error);
+    return false;
   }
-  return false;
 };
 
-const findUserByEmail = (email: string): User | null => {
-  return users.find(user => user.getEmail() === email) || null;
+const findUserByName = async (name: string): Promise<User | null> => {
+  try {
+    const userPrisma = await database.user.findFirst({
+      where: { name },
+    });
+    return userPrisma ? User.from(userPrisma) : null;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+const findUserByEmail = async (email: string): Promise<User | null> => {
+  try {
+    const userPrisma = await database.user.findFirst({
+      where: { email },
+    });
+    return userPrisma ? User.from(userPrisma) : null;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
 };
 
 export default {
-  createUser,
+  createUser ,
   getUserById,
   getAllUsers,
-  updateUser,
-  deleteUser,
+  updateUser ,
+  deleteUser ,
   findUserByName,
   findUserByEmail,
 };
-

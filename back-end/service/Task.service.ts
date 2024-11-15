@@ -4,18 +4,35 @@ import { Task } from '../model/Task';
 import { User } from '../model/User';
 import { Tag } from '../model/Tag';
 import { Reminder } from '../model/Reminder';
+import userDb from '../repository/User.db'
+import tagRepository from '../repository/Tag.db'
 
 const createTask = async ({id, title, description, priority, deadline, status, tags, reminder, user }: TaskInput): Promise<Task> => {
-    const existingTask = taskRepository.getTaskByTitle(title);
+    const existingTask = await taskRepository.getTaskByTitle(title);
     if (existingTask) {
         throw new Error(`A task with the title "${title}" already exists.`);
     }
 
-    const tagInstances = tags.map(tagInput => new Tag(tagInput));
+    const tagInstances: Tag[] = [];
+
+    for (const tagInput of tags) {
+        const existingTag = await tagRepository.getTagByName(tagInput.name); 
+        if (existingTag) {
+            tagInstances.push(existingTag);
+        } else {
+            const newTag = new Tag(tagInput);
+            tagInstances.push(await tagRepository.createTag(newTag)); 
+        }
+    }
 
     const reminderInstance = reminder ? new Reminder(reminder) : undefined;
+     
+    if (!user || typeof user.id !== 'number') {
+        throw new Error('User  ID must be provided and must be a number.');
+    }
 
-    const userInstance = new User(user);
+    const userInstance = await userDb.getUserById( {id: user.id} );
+    if (!userInstance) throw new Error('User  not found');
 
     const newTask = new Task({
         id,
@@ -33,7 +50,9 @@ const createTask = async ({id, title, description, priority, deadline, status, t
 };
 
 const getTaskById = async (id: number): Promise<Task | null> => {
-    return taskRepository.getTaskById(id);
+    const task = await taskRepository.getTaskById({ id });
+    if (!task) throw new Error(`Task with id ${id} does not exist.`);
+    return task;
 };
 
 const getAllTasks = async (): Promise<Task[]> => {
@@ -41,12 +60,11 @@ const getAllTasks = async (): Promise<Task[]> => {
 };
 
 const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => {
-
     if (updatedTaskInput.id === undefined) {
         throw new Error(`Task update failed. Please provide a valid id.`);
     }
 
-    const existingTask = await taskRepository.getTaskById(updatedTaskInput.id);
+    const existingTask = await taskRepository.getTaskById({id: updatedTaskInput.id});
     if (!existingTask) {
         throw new Error(`Task with ID ${updatedTaskInput.id} does not exist.`);
     }
@@ -75,7 +93,7 @@ const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => 
 };
 
 const deleteTask = async (id: number): Promise<boolean> => {
-    const existingTask = taskRepository.getTaskById(id);
+    const existingTask = await taskRepository.getTaskById({id});
     if (!existingTask) {
         throw new Error(`Task with ID ${id} does not exist.`);
     }

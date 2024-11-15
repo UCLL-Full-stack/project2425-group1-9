@@ -1,8 +1,8 @@
 import { Reminder as ReminderPrisma} from '@prisma/client';
 
 export class Reminder {
-  private id?: number;
-  private reminderTime: Date;
+  readonly id?: number;
+  readonly reminderTime: Date;
 
   constructor(reminder: { id?: number; reminderTime: Date;}) {
     this.id = reminder.id;

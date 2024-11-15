@@ -1,40 +1,67 @@
 import { Reminder } from '../model/Reminder';
+import database from './database';
 
-const reminders: Reminder[] = [
-  new Reminder({ id: 1, reminderTime: new Date(Date.now() + 24 * 60 * 60 * 1000)}),
-  new Reminder({ id: 2, reminderTime: new Date(Date.now() + 48 * 60 * 60 * 1000)})
-]; 
-
-const createReminder = (reminder: Reminder): Reminder => {
-  reminders.push(reminder);
-  return reminder;
-};
-
-const getReminderById = (id: number): Reminder | null => {
-  return reminders.find(reminder => reminder.getId() === id) || null;
-};
-
-const getAllReminders = (): Reminder[] => {
-  return reminders;
-};
-
-const updateReminder = (updatedReminder: Reminder): Reminder | null => {
-  const index = reminders.findIndex(reminder => reminder.getId() === updatedReminder.getId());
-  if (index > -1) {
-    reminders[index] = updatedReminder;
-    return updatedReminder;
+const createReminder = async (reminderData: Reminder): Promise<Reminder> => {
+  try {
+    const createdReminder = await database.reminder.create({
+      data: {
+        reminderTime: reminderData.reminderTime,
+      },
+    });
+    return Reminder.from(createdReminder);
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
   }
-  return null;
 };
 
-const deleteReminder = (id: number): boolean => {
-  const index = reminders.findIndex(reminder => reminder.getId() === id)
-  
-  if (index > -1) {  
-    reminders.splice(index, 1);  
-    return true;  
+const getReminderById = async (id: number): Promise<Reminder | null> => {
+  try {
+    const reminderPrisma = await database.reminder.findUnique({
+      where: { id: id },
+    });
+    return reminderPrisma ? Reminder.from(reminderPrisma) : null;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
   }
-  return false;  
+};
+
+const getAllReminders = async (): Promise<Reminder[]> => {
+  try {
+    const remindersPrisma = await database.reminder.findMany();
+    return remindersPrisma.map((reminderPrisma) => Reminder.from(reminderPrisma));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+const updateReminder = async (updatedReminderData: Reminder): Promise<Reminder | null> => {
+  try {
+    const updatedReminder = await database.reminder.update({
+      where: { id: updatedReminderData.id },
+      data: {
+        reminderTime: updatedReminderData.reminderTime,
+      },
+    });
+    return Reminder.from(updatedReminder);
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+const deleteReminder = async (id: number): Promise<boolean> => {
+  try {
+    await database.reminder.delete({
+      where: { id: id },
+    });
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 };
 
 export default {
@@ -42,5 +69,5 @@ export default {
   getReminderById,
   getAllReminders,
   updateReminder,
-  deleteReminder
+  deleteReminder,
 };

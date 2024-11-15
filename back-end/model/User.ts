@@ -2,10 +2,10 @@ import {Task} from '../model/Task'
 import { Task as TaskPrisma, User as UserPrisma} from '@prisma/client';
 
 export class User {
-  private id?: number;
-  private name: string;
-  private email: string;
-  private password: string;
+  readonly id?: number;
+  readonly name: string;
+  readonly email: string;
+  readonly password: string;
 
   constructor(user: {
     id?: number;

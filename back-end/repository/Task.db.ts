@@ -1,49 +1,116 @@
 import { Task } from '../model/Task';
-import TagDb from './Tag.db';
-import ReminderDb from './Reminder.db';
 import database from './database';
 
-
-
-const createTask = (task: Task): Task => {
-  tasks.push(task);
-  return task;
+const createTask = async ({title, description, priority, deadline, status, tags, reminder, user }: Task): Promise<Task> => {
+  try {
+    const createdTask = await database.task.create({
+      data: {
+        title,
+        description,
+        priority,
+        deadline,
+        status,
+        tags: {
+          connect: tags.map((tag) => ({ id: tag.id })),
+        },
+        ...(reminder ? { reminder: { connect: { id: reminder.id } } } : {}), 
+        user: {
+          connect: { id: user.id },
+        },           
+  },
+  include: {
+    tags: true,
+    reminder: true,
+    user: true,
+  }, 
+});
+    return Task.from(createdTask);
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
 };
 
-const getTaskById = (id: number): Task | null => {
-  return tasks.find(task => task.getId() === id) || null;
+const getTaskById = async ({id}: {id:number}): Promise<Task | null> => {
+  try {
+    const taskPrisma = await database.task.findUnique({
+      where: { id: id },
+      include: { tags: true, reminder: true, user: true },
+    });
+    return taskPrisma ? Task.from(taskPrisma) : null;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
 };
 
-const getTaskByTitle = (title: string): Task | null => {
-  return tasks.find(task => task.getTitle() === title) || null
-}
+const getTaskByTitle = async (title: string): Promise<Task | null> => {
+  try {
+    const taskPrisma = await database.task.findFirst({
+      where: { title: title },
+      include: { tags: true, reminder: true, user: true },
+    });
+    return taskPrisma ? Task.from(taskPrisma) : null;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
 
 const getAllTasks = async (): Promise<Task[]> => {
-  const taskPrisma = await database.task.findMany({
-            include: {tags: true, reminder: true, user: true}
-        })
-        return taskPrisma.map((taskPrisma) => Task.from(taskPrisma));
-};
-
-const updateTask = (updatedTask: Task): Task | null => {
-  const index = tasks.findIndex(task => task.getId() === updatedTask.getId());
-  if (index > -1) {
-    tasks[index] = updatedTask;
-    return updatedTask;
+  try {
+    const taskPrisma = await database.task.findMany({
+      include: { tags: true, reminder: true, user: true },
+    });
+    return taskPrisma.map((taskPrisma) => Task.from(taskPrisma));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
   }
-  return null;
 };
 
-const deleteTask = (id: number): boolean => {
-  const index = tasks.findIndex(task => task.getId() === id); 
-
-  if (index > -1) {  
-    tasks.splice(index, 1);  
-    return true;  
+const updateTask = async ({id, title, description, priority, deadline, status, tags, reminder, user}: Task): Promise<Task | null> => {
+  try {
+    const taskPrisma = await database.task.update({
+      where: { id: id },
+      data: {
+        title,
+        description,
+        priority,
+        deadline,
+        status,
+        tags: {
+          connect: tags.map((tag) => ({ id: tag.id })),
+        },
+        ...(reminder ? { reminder: { connect: { id: reminder.id } } } : {}),
+        user: {
+          connect: { id: user.id },
+        },
+      },
+      include: {
+        tags: true,
+        reminder: true,
+        user: true,
+      },
+    });
+    return Task.from(taskPrisma);
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
   }
-  return false;  
 };
 
+const deleteTask = async (id: number): Promise<boolean> => {
+  try {
+    await database.task.delete({
+      where: { id: id },
+    });
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
 
 export default {
   createTask,
@@ -51,5 +118,5 @@ export default {
   getAllTasks,
   updateTask,
   deleteTask,
-  getTaskByTitle
+  getTaskByTitle,
 };
