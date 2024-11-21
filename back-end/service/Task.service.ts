@@ -7,7 +7,7 @@ import { Reminder } from '../model/Reminder';
 import userDb from '../repository/User.db'
 import tagRepository from '../repository/Tag.db'
 
-const createTask = async ({id, title, description, priority, deadline, status, tags, reminder, user }: TaskInput): Promise<Task> => {
+const createTask = async ({ title, description, priority, deadline, status, tags, reminder, user }: TaskInput): Promise<Task> => {
     const existingTask = await taskRepository.getTaskByTitle(title);
     if (existingTask) {
         throw new Error(`A task with the title "${title}" already exists.`);
@@ -24,8 +24,19 @@ const createTask = async ({id, title, description, priority, deadline, status, t
             tagInstances.push(await tagRepository.createTag(newTag)); 
         }
     }
+    
+    let reminderInstance: Reminder | undefined;
+    if (reminder) {
+        const reminderTime = new Date(reminder.reminderTime); // Convert to Date object
+        if (isNaN(reminderTime.getTime())) {
+            throw new Error('Invalid reminder time format.');
+        }
+        reminderInstance = new Reminder({
+            id: reminder.id,
+            reminderTime: reminderTime
+        });
+    }
 
-    const reminderInstance = reminder ? new Reminder(reminder) : undefined;
      
     if (!user || typeof user.id !== 'number') {
         throw new Error('User  ID must be provided and must be a number.');
@@ -35,7 +46,6 @@ const createTask = async ({id, title, description, priority, deadline, status, t
     if (!userInstance) throw new Error('User  not found');
 
     const newTask = new Task({
-        id,
         title,
         description,
         priority,

@@ -44,9 +44,6 @@ export class Task {
     if (!['low', 'medium', 'high'].includes(this.priority)) {
       throw new Error('Task priority must be one of: low, medium, or high.');
     }
-    if (this.deadline <= new Date()) {
-      throw new Error('Deadline must be a valid future date.');
-    }
     if (!this.status || typeof this.status !== 'string' || this.status.trim().length === 0) {
       throw new Error('Status is required and cannot be empty.');
     }

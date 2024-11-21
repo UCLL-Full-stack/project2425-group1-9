@@ -1,8 +1,9 @@
 import { Task } from '../model/Task';
 import database from '../util/database';
 
-const createTask = async ({title, description, priority, deadline, status, tags, reminder, user }: Task): Promise<Task> => {
+const createTask = async ({title, description, priority, deadline, tags, reminder, user }: Task): Promise<Task> => {
   try {
+    const status = 'not finished';
     const createdTask = await database.task.create({
       data: {
         title,
@@ -28,6 +29,7 @@ const createTask = async ({title, description, priority, deadline, status, tags,
   } catch (error) {
     console.error(error);
     throw new Error('Database error. See server log for details.');
+    
   }
 };
 
@@ -120,6 +122,7 @@ const getTasksByUserId = async (userId: number): Promise<Task[]> => {
       where: { userId: userId },
       include: { tags: true, reminder: true, user: true },
     });
+    console.log("retrieved tasks from database:", tasksPrisma)
     return tasksPrisma.map((taskPrisma) => Task.from(taskPrisma));
   } catch (error) {
     console.error(error);
