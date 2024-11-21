@@ -105,10 +105,20 @@ const deleteTask = async (id: number): Promise<boolean> => {
     return taskRepository.deleteTask(id);
 };
 
+const getTaskByUserId = async (UserId: number): Promise<Task[] | null> => {
+    const task = await taskRepository.getTasksByUserId( UserId );
+    if (!task) throw new Error(`Task with id ${UserId} does not exist.`);
+    return task;
+};
+
+
+
+
 export default {
     createTask,
     getTaskById,
     getAllTasks,
     updateTask,
     deleteTask,
+    getTaskByUserId
 };

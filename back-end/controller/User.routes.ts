@@ -23,10 +23,6 @@
  *           type: string
  *           description: The password of the user.
  *           writeOnly: true
- *         tasks:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Task'
  */
 
 

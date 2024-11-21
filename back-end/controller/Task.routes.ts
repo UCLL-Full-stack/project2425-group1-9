@@ -33,10 +33,14 @@
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Tag'  
- *         reminders:
+ *         reminder:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Reminder' 
+ *         user:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/User'  
  */ 
 
 import express, { Request, Response } from 'express';
@@ -97,6 +101,7 @@ taskRouter.get('/', async (req: Request, res: Response) => {
         const tasks = await taskService.getAllTasks();
         res.status(200).json(tasks);
     } catch (error) {
+        console.error(error); // Log the error for debugging
         res.status(500).json({ error: 'Failed to retrieve tasks' });
     }
 });
@@ -219,5 +224,42 @@ taskRouter.delete('/:id', async (req: Request, res: Response) => {
         res.status(400).json({ error: 'Failed to delete task' });
     }
 });
+
+/**
+ * @swagger
+ * /tasks/user/{id}:
+ *  get:
+ *      summary: Get a task by userId.
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *              type: integer
+ *              required: true
+ *              description: The task UserId.
+ *      responses:
+ *          200:
+ *              description: A Task object list.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Task'
+ */
+taskRouter.get('/user/:userId', async (req, res) => {
+  try {
+    const tasks = await taskService.getTaskByUserId(Number(req.params.userId));
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({ error: 'No tasks found for this user' });
+    }
+    res.json(tasks);
+  } catch (error) {
+    console.error('Error retrieving tasks for user:', error); // Log the error for debugging
+    res.status(500).json({ error: 'Failed to retrieve tasks' });
+  }
+});
+
+
+
+
 
 export {taskRouter};

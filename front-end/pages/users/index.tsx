@@ -22,14 +22,7 @@ const Users: React.FC = () => {
   useEffect(() => {
     getUsers();
   }, []);
-
-  const handleUpdateUser = (updatedUser: User) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-    );
-    setSelectedUser(updatedUser); // Update the currently selected user
-  };
-
+ 
   return (
     <>
       <Head>
@@ -42,7 +35,7 @@ const Users: React.FC = () => {
           <h2>Users overview</h2>
           <UserOverViewTable users={users} selectUser={setSelectedUser} />
           {selectedUser && (
-            <UserTasks user={selectedUser} onUpdateUser={handleUpdateUser} />
+            <UserTasks user={selectedUser}  />
           )}
         </section>
       </main>

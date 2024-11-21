@@ -17,10 +17,6 @@
  *           type: string
  *           format: date-time
  *           description: The time for the reminder (ISO 8601 format).
- *         taskId:
- *           type: number
- *           format: int64
- *           description: The ID of the task associated with the reminder.
  */
 
 import express, { Request, Response } from 'express';

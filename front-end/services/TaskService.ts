@@ -2,6 +2,21 @@ import { Task } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+const getTasksByUserId = async (userId: number): Promise<Task[]> => {
+  const response = await fetch(`${API_URL}/tasks/user/${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch tasks for user');
+  }
+  
+  return response.json();
+};
+
 const createTask = async (taskInput: Task): Promise<any> => {
   const response = await fetch(`${API_URL}/tasks`, {
     method: 'POST',
@@ -35,6 +50,7 @@ const updateTask = async (taskInput: Task): Promise<any> => {
 const taskService = {
   createTask,
   updateTask, 
+  getTasksByUserId,
 };
 
 export default taskService;

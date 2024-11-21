@@ -3,7 +3,6 @@ export type User =  {
     name: string,
     email: string,
     password: string,
-    tasks: Task[]
 }
 
 export type Task = {
@@ -15,6 +14,7 @@ export type Task = {
     status: string;
     tags: Tag[]   
     reminder?: Reminder; 
+    user: User; 
 };
 
 

@@ -1,5 +1,5 @@
 import { User } from '../model/User';
-import database from './database';
+import database from '../util/database';
 
 const createUser  = async ({ name, email, password }: User): Promise<User> => {
   try {

@@ -1,5 +1,5 @@
 import { Task } from '../model/Task';
-import database from './database';
+import database from '../util/database';
 
 const createTask = async ({title, description, priority, deadline, status, tags, reminder, user }: Task): Promise<Task> => {
   try {
@@ -62,9 +62,11 @@ const getAllTasks = async (): Promise<Task[]> => {
     const taskPrisma = await database.task.findMany({
       include: { tags: true, reminder: true, user: true },
     });
+    console.log('Retrieved tasks from database:', taskPrisma); 
     return taskPrisma.map((taskPrisma) => Task.from(taskPrisma));
   } catch (error) {
     console.error(error);
+    console.error('Error retrieving tasks:', error);
     throw new Error('Database error. See server log for details.');
   }
 };
@@ -112,6 +114,19 @@ const deleteTask = async (id: number): Promise<boolean> => {
   }
 };
 
+const getTasksByUserId = async (userId: number): Promise<Task[]> => {
+  try {
+    const tasksPrisma = await database.task.findMany({
+      where: { userId: userId },
+      include: { tags: true, reminder: true, user: true },
+    });
+    return tasksPrisma.map((taskPrisma) => Task.from(taskPrisma));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
 export default {
   createTask,
   getTaskById,
@@ -119,4 +134,5 @@ export default {
   updateTask,
   deleteTask,
   getTaskByTitle,
+  getTasksByUserId
 };
