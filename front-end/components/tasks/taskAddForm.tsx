@@ -70,7 +70,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ onClose }) => {
             priority,
             deadline: deadline as Date,
             tags: selectedTags,
-            status: 'Not Finished',
+            status: 'not done',
             user: loggedInUser,
         };
 

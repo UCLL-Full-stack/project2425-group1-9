@@ -16,7 +16,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
 
     const toggleTaskStatus = async (task: Task) => {
         try {
-            const updatedStatus = task.status === 'completed' ? 'not completed' : 'completed';
+            const updatedStatus = task.status === 'done' ? 'not done' : 'done';
             const updatedTask = { ...task, status: updatedStatus };
             await taskService.updateTask(updatedTask); 
         } catch (error) {
@@ -35,7 +35,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
                         <th className="border border-gray-300 px-4 py-2">Tags</th>
                         <th className="border border-gray-300 px-10 py-2">Reminder</th>
                         <th className="border border-gray-300 px-4 py-2">Status</th>
-                        <th className="border border-gray-300 px-4 py-2">Actions</th>
+                        <th className="border border-gray-300 px-4 py-2">Edit task</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white">
