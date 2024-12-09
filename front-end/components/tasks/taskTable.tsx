@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Task } from '../../types';
+import taskService from '@/services/TaskService';
 
 interface TaskTableProps {
     tasks: Task[];
@@ -11,6 +12,16 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
 
     const handleDescriptionClick = (description: string) => {
         setSelectedDescription(description);
+    };
+
+    const toggleTaskStatus = async (task: Task) => {
+        try {
+            const updatedStatus = task.status === 'completed' ? 'not completed' : 'completed';
+            const updatedTask = { ...task, status: updatedStatus };
+            await taskService.updateTask(updatedTask); 
+        } catch (error) {
+            console.error("Failed to update task status", error);
+        }
     };
     return (
         <div className="overflow-x-auto">
@@ -52,7 +63,13 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
                                     ? new Date(task.reminder.reminderTime).toLocaleString()
                                     : 'No Reminder'}
                             </td>
-                            <td className="border border-gray-300 px-4 py-2 ">{task.status}</td>
+                            <td
+                                className="border border-gray-300 px-4 py-2 cursor-pointer text-blue-600"
+                                onClick={() => toggleTaskStatus(task)} 
+                            >
+                                {task.status}
+                            </td>
+
                             <td className="border border-gray-300 px-4 py-2">
                                 <button
                                     className="px-3 py-1 bg-blue-600 text-white rounded-md"
