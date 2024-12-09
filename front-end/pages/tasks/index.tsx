@@ -1,14 +1,13 @@
-// pages/user-tasks/index.tsx
-
 import Head from 'next/head';
 import useSWR, { mutate } from 'swr';
 import { Task } from '../../types';
 import taskService from '../../services/TaskService';
-import TaskTable from '../../components/tasks/taskTable'; // Import the new TaskTable component
-import { useEffect } from 'react';
+import TaskTable from '../../components/tasks/taskTable';
+import { useEffect, useState } from 'react';
 import Header from '@/components/header';
+import AddTaskForm from '../../components/tasks/taskAddForm'; // Import the form component
+import EditTaskForm from '@/components/tasks/taskEditForm';
 
-// Fetcher function for SWR
 const fetchTasks = async () => {
     const tasks = await taskService.getAllTasks();
     return tasks;
@@ -16,24 +15,43 @@ const fetchTasks = async () => {
 
 const UserTasksPage: React.FC = () => {
     const { data: tasks, error, isLoading } = useSWR('userTasks', fetchTasks);
+    const [showForm, setShowForm] = useState(false);
+    const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-    // Optional: Set up periodic re-fetching (e.g., every 1 minute)
     useEffect(() => {
         const interval = setInterval(() => {
-            mutate('userTasks'); // Trigger a re-fetch
-        }, 60000); // 60 seconds
-        return () => clearInterval(interval); // Cleanup on unmount
+            mutate('userTasks');
+        }, 1000);
+        return () => clearInterval(interval);
     }, []);
+
+    const handleFormClose = () => {
+        setShowForm(false);
+        mutate('userTasks'); 
+    };
+
+    const handleEditTask = (task: Task) => {
+        setEditingTask(task);
+    };
+    
 
     return (
         <>
             <Head>
                 <title>User Tasks</title>
             </Head>
-            <Header /> 
+            <Header />
             <main className="bg-gray-100 min-h-screen flex flex-col items-center py-8">
-                <div className="w-full max-w-6xl px-4">
+                <div className="w-full max-w-7xl px-2">
                     <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">Your Tasks</h1>
+                    <div className="text-center mb-4">
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition duration-300"
+                        >
+                            Add Task
+                        </button>
+                    </div>
 
                     {isLoading && <p className="text-center text-blue-500">Loading tasks...</p>}
                     {error && (
@@ -45,9 +63,15 @@ const UserTasksPage: React.FC = () => {
                     )}
 
                     {!isLoading && !error && tasks?.length > 0 && (
-                        <TaskTable tasks={tasks} /> 
+                        <TaskTable tasks={tasks} onEdit={handleEditTask} />
                     )}
                 </div>
+
+                {showForm && <AddTaskForm onClose={handleFormClose} />}
+
+                {editingTask && (
+                <EditTaskForm task={editingTask} onClose={() => setEditingTask(null)} />)}
+
             </main>
         </>
     );

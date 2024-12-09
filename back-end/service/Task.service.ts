@@ -6,7 +6,6 @@ import { Tag } from '../model/Tag';
 import { Reminder } from '../model/Reminder';
 import userDb from '../repository/User.db'
 import tagRepository from '../repository/Tag.db'
-import { UserInput, TagInput } from '../types';
 
 const createTask = async ({ title, description, priority, deadline, status, tags: TagInput, user: UserInput }: TaskInput): Promise<Task> => {
     const existingTask = await taskRepository.getTaskByTitle(title);

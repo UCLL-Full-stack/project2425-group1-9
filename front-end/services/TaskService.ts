@@ -63,16 +63,13 @@ const createTask = async (taskInput: Task): Promise<any> => {
 
 
 
-
-
-
-
-
 const updateTask = async (taskInput: Task): Promise<any> => {
+  const token = JSON.parse(localStorage.getItem('loggedInUser'))?.token;
   const response = await fetch(`${API_URL}/tasks/${taskInput.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(taskInput),
   });
