@@ -1,16 +1,17 @@
 import { User } from '../model/User';
-import database from '../util/database';
+import database from './database';
 
-const createUser  = async ({ name, email, password }: User): Promise<User> => {
+const createUser  = async ({ name, email, password, role }: User): Promise<User> => {
   try {
     const createdUser  = await database.user.create({
       data: {
         name,
         email,
         password,
+        role
       },
     });
-    return User.from(createdUser );
+    return User.from(createdUser);
   } catch (error) {
     console.error(error);
     throw new Error('Database error. See server log for details.');

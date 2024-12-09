@@ -1,12 +1,9 @@
-import { Tag, User } from "@prisma/client";
-import { Reminder } from "../model/Reminder";
-
-
 type UserInput = {
     id?: number;            
     name: string;            
-    email: string;           
+    email?: string;           
     password: string; 
+    role?: Role;
 };
 
 
@@ -32,10 +29,20 @@ type TaskInput = {
     user: UserInput
 };
 
+type AuthenticationResponse = {
+    token: string;
+    name: string;
+    role: string;
+};
+
+type Role = 'admin' | 'user' | 'guest';
+
 
 export {
     UserInput,
     ReminderInput,
     TagInput,
     TaskInput,
+    Role,
+    AuthenticationResponse,
 };

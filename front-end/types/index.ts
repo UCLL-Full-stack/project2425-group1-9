@@ -1,15 +1,16 @@
 export type User =  {
-    id: number,
-    name: string,
-    email: string,
-    password: string,
+    id?: number,
+    name?: string,
+    email?: string,
+    password?: string,
+    role?: string,
 }
 
 export type Task = {
     id?: number;            
     title: string;           
     description: string;    
-    priority: 'low' | 'medium' | 'high';
+    priority: string
     deadline: Date;          
     status: string;
     tags: Tag[]   
@@ -26,4 +27,9 @@ export type Reminder = {
 export type Tag = {
     id: number;             
     name: string;            
+};
+
+export type StatusMessage = {
+    message: string;
+    type: "error" | "success";
 };

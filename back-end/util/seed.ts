@@ -1,8 +1,7 @@
-import database from './database';
-import { User } from '../model/User';
-import { Task } from '../model/Task';
-import { Tag } from '../model/Tag';
-import { Reminder } from '../model/Reminder';
+import database from '../repository/database';
+import bcrypt from 'bcrypt';
+
+
 
 const seedDatabase = async () => {
   await database.task.deleteMany({});
@@ -15,7 +14,8 @@ const seedDatabase = async () => {
     data: {
       name: 'Alice Smith',
       email: 'alice@example.com',
-      password: 'password123',
+      password: await bcrypt.hash('password123', 12),
+      role: 'admin'
     },
   });
 
@@ -23,7 +23,8 @@ const seedDatabase = async () => {
     data: {
       name: 'Bob Johnson',
       email: 'bob@example.com',
-      password: 'password123',
+      password: await bcrypt.hash('password123', 12),
+      role: 'user'
     },
   });
 

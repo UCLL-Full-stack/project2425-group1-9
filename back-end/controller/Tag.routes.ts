@@ -28,6 +28,8 @@ const tagRouter = express.Router();
  * @swagger
  * /tags:
  *   post:
+ *      security:
+ *       - bearerAuth: []
  *      summary: Create a new tag.
  *      requestBody:
  *        required: true
@@ -58,6 +60,8 @@ tagRouter.post('/', async (req: Request, res: Response) => {
  * @swagger
  * /tags:
  *  get:
+ *      security:
+ *       - bearerAuth: []
  *      summary: Get all tags.
  *      responses:
  *          200:
@@ -87,6 +91,8 @@ tagRouter.get('/', async (req: Request, res: Response) => {
  * @swagger
  * /tags/{id}:
  *   delete:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Delete a tag by id.
  *     parameters:
  *       - in: path

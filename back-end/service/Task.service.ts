@@ -6,44 +6,28 @@ import { Tag } from '../model/Tag';
 import { Reminder } from '../model/Reminder';
 import userDb from '../repository/User.db'
 import tagRepository from '../repository/Tag.db'
+import { UserInput, TagInput } from '../types';
 
-const createTask = async ({ title, description, priority, deadline, status, tags, reminder, user }: TaskInput): Promise<Task> => {
+const createTask = async ({ title, description, priority, deadline, status, tags: TagInput, user: UserInput }: TaskInput): Promise<Task> => {
     const existingTask = await taskRepository.getTaskByTitle(title);
     if (existingTask) {
         throw new Error(`A task with the title "${title}" already exists.`);
     }
+        
+    if (!TagInput.length) throw new Error('At least one Tag is required');
+    if (!UserInput.id) throw new Error('User id is required');
+        
+    const user = await userDb.getUserById({ id: UserInput.id });
+    if (!user) throw new Error('User not found');
 
-    const tagInstances: Tag[] = [];
-
-    for (const tagInput of tags) {
-        const existingTag = await tagRepository.getTagByName(tagInput.name); 
-        if (existingTag) {
-            tagInstances.push(existingTag);
-        } else {
-            const newTag = new Tag(tagInput);
-            tagInstances.push(await tagRepository.createTag(newTag)); 
-        }
-    }
-    
-    let reminderInstance: Reminder | undefined;
-    if (reminder) {
-        const reminderTime = new Date(reminder.reminderTime); // Convert to Date object
-        if (isNaN(reminderTime.getTime())) {
-            throw new Error('Invalid reminder time format.');
-        }
-        reminderInstance = new Reminder({
-            id: reminder.id,
-            reminderTime: reminderTime
-        });
-    }
-
-     
-    if (!user || typeof user.id !== 'number') {
-        throw new Error('User  ID must be provided and must be a number.');
-    }
-
-    const userInstance = await userDb.getUserById( {id: user.id} );
-    if (!userInstance) throw new Error('User  not found');
+    const tags = await Promise.all(
+        TagInput.map(async (taginput) => {
+            if (!taginput.id) throw new Error('Tag id is required');
+            const tag = await tagRepository.getTagById(taginput.id);
+            if (!tag) throw new Error(`Tag with id ${taginput.id} not found`);
+            return tag;
+        })
+    );
 
     const newTask = new Task({
         title,
@@ -51,9 +35,8 @@ const createTask = async ({ title, description, priority, deadline, status, tags
         priority,
         deadline,
         status: status || 'not finished',
-        tags: tagInstances, 
-        reminder: reminderInstance, 
-        user: userInstance 
+        tags,
+        user 
     });
 
     return taskRepository.createTask(newTask);
@@ -65,38 +48,49 @@ const getTaskById = async (id: number): Promise<Task | null> => {
     return task;
 };
 
-const getAllTasks = async (): Promise<Task[]> => {
-    return taskRepository.getAllTasks();
+const getAllTasks = async ({
+    name,
+    role,
+}: {
+    name: string;
+    role: string; 
+}): Promise<Task[]> => {
+    if (role === 'admin') {
+        return taskRepository.getAllTasks();
+    } else if (role === 'user') {
+        return taskRepository.getTasksByUserName(name); 
+    } else {
+        throw new Error('You are not authorized to access this resource.');
+    }
 };
-
 const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => {
-    if (updatedTaskInput.id === undefined) {
+    console.log('Received updateTask input:', updatedTaskInput);
+    if (!updatedTaskInput.id) {
         throw new Error(`Task update failed. Please provide a valid id.`);
     }
 
     const existingTask = await taskRepository.getTaskById({id: updatedTaskInput.id});
+    console.log('Existing task found:', existingTask);
     if (!existingTask) {
         throw new Error(`Task with ID ${updatedTaskInput.id} does not exist.`);
     }
 
-    if (updatedTaskInput.deadline && updatedTaskInput.deadline <= new Date()) {
+    if (updatedTaskInput.deadline <= new Date()) {
         throw new Error('Updated task deadline must be in the future.');
     }
     
-    const userInstance = new User(updatedTaskInput.user);
     const tagInstances = updatedTaskInput.tags.map(tagInput => new Tag(tagInput));
 
 
     const updatedTask = new Task({
-        id: updatedTaskInput.id,
-        title: updatedTaskInput.title || existingTask.getTitle(),
-        description: updatedTaskInput.description || existingTask.getDescription(),
-        priority: updatedTaskInput.priority || existingTask.getPriority(),
-        deadline: updatedTaskInput.deadline || existingTask.getDeadline(),
-        status: updatedTaskInput.status || existingTask.getStatus(), 
-        tags: tagInstances || existingTask.getTags(),
-        reminder: existingTask.getReminder(), 
-        user: userInstance
+        id: existingTask.id,
+        title: updatedTaskInput.title,
+        description: updatedTaskInput.description,
+        priority: updatedTaskInput.priority,
+        deadline: updatedTaskInput.deadline,
+        status: updatedTaskInput.status, 
+        tags: tagInstances,
+        user: existingTask.getUser()
     });
 
     return taskRepository.updateTask(updatedTask);
@@ -121,6 +115,14 @@ const getTaskByUserId = async (UserId: number): Promise<Task[] | null> => {
     return task;
 };
 
+const getTasksByUserName = async (userName: string): Promise<Task[]> => {
+    const tasks = await taskRepository.getTasksByUserName(userName);
+    if (!tasks || tasks.length === 0) {
+        throw new Error(`No tasks found for user: ${userName}`);
+    }
+    return tasks;
+};
+
 
 
 
@@ -130,5 +132,6 @@ export default {
     getAllTasks,
     updateTask,
     deleteTask,
-    getTaskByUserId
+    getTaskByUserId,
+    getTasksByUserName
 };

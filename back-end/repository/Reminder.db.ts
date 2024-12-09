@@ -1,5 +1,5 @@
 import { Reminder } from '../model/Reminder';
-import database from '../util/database';
+import database from './database';
 
 const createReminder = async (reminderData: Reminder): Promise<Reminder> => {
   try {

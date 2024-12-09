@@ -1,5 +1,5 @@
 import { Tag } from '../model/Tag';
-import database from '../util/database';
+import database from './database';
 
 const createTag = async ({ id, name }: Tag): Promise<Tag> => {
   try {

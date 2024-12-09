@@ -8,6 +8,7 @@ import {userRouter} from './controller/User.routes';
 import {taskRouter} from './controller/Task.routes';
 import { reminderRouter } from './controller/Reminder.routes';
 import { tagRouter } from './controller/Tag.routes';
+import { expressjwt } from 'express-jwt';
 
 
 const app = express();
@@ -16,6 +17,15 @@ const port = process.env.APP_PORT || 3000;
 
 app.use(cors({ origin: 'http://localhost:8080' }));
 app.use(bodyParser.json());
+
+app.use(
+    expressjwt({
+        secret: process.env.JWT_SECRET || 'default_secret',
+        algorithms: ['HS256'],
+    }).unless({
+        path: ['/api-docs', /^\/api-docs\/.*/, '/users/login', '/users/signup', '/status'],
+    })
+);
 
 app.use('/users', userRouter); 
 app.use('/tasks', taskRouter);

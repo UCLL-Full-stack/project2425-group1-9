@@ -29,20 +29,22 @@ const reminderRouter = express.Router();
  * @swagger
  * /reminders:
  *   post:
- *      summary: Create a new task.
+ *      security:
+ *       - bearerAuth: []
+ *      summary: Create a new reminder.
  *      requestBody:
  *        required: true
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Task'
+ *              $ref: '#/components/schemas/Reminder'
  *      responses:
  *         201:
- *            description: The created Task.
+ *            description: The created Reminder.
  *            content:
  *              application/json:
  *                schema:
- *                  $ref: '#/components/schemas/Task'
+ *                  $ref: '#/components/schemas/Reminder'
  */ 
 reminderRouter.post('/', async (req: Request, res: Response) => {
         const reminderInput: ReminderInput = req.body;
@@ -61,17 +63,19 @@ reminderRouter.post('/', async (req: Request, res: Response) => {
  * @swagger
  * /reminders/{id}:
  *   delete:
- *     summary: Delete a task by id.
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Delete a Reminder by id.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The task id.
+ *         description: The Reminder id.
  *     responses:
  *       200:
- *         description: Successfully deleted task.
+ *         description: Successfully deleted Reminder.
  *         content:
  *           application/json:
  *             schema:

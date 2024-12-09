@@ -1,22 +1,26 @@
 import {Task} from '../model/Task'
 import { Task as TaskPrisma, User as UserPrisma} from '@prisma/client';
+import { Role } from '../types';
 
 export class User {
   readonly id?: number;
   readonly name: string;
   readonly email: string;
   readonly password: string;
+  readonly role: Role;
 
   constructor(user: {
     id?: number;
     name: string;
     email: string;
     password: string;
+    role: Role;
   }) {
     this.id = user.id;
     this.name = user.name;
     this.email = user.email;
     this.password = user.password;
+    this.role = user.role;
     this.validate();
   }
 
@@ -50,18 +54,24 @@ export class User {
   getPassword() {
     return this.password
   }
+
+  getRole() {
+    return this.role
+  }
   
   static from({
         id,
         name,
         email,
         password,
+        role
     }: UserPrisma ) {
         return new User({
           id,
           name,
           email,
           password,
+          role: role as Role
         });
     }
 }

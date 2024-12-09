@@ -1,7 +1,7 @@
 import { Task } from '../model/Task';
-import database from '../util/database';
+import database from './database';
 
-const createTask = async ({title, description, priority, deadline, tags, reminder, user }: Task): Promise<Task> => {
+const createTask = async ({title, description, priority, deadline, tags, user }: Task): Promise<Task> => {
   try {
     const status = 'not finished';
     const createdTask = await database.task.create({
@@ -12,9 +12,8 @@ const createTask = async ({title, description, priority, deadline, tags, reminde
         deadline,
         status,
         tags: {
-          connect: tags.map((tag) => ({ id: tag.id })),
+          connect: tags.map((tag) => ({ id: tag.getId() })),
         },
-        ...(reminder ? { reminder: { connect: { id: reminder.id } } } : {}), 
         user: {
           connect: { id: user.id },
         },           
@@ -64,7 +63,6 @@ const getAllTasks = async (): Promise<Task[]> => {
     const taskPrisma = await database.task.findMany({
       include: { tags: true, reminder: true, user: true },
     });
-    console.log('Retrieved tasks from database:', taskPrisma); 
     return taskPrisma.map((taskPrisma) => Task.from(taskPrisma));
   } catch (error) {
     console.error(error);
@@ -73,8 +71,9 @@ const getAllTasks = async (): Promise<Task[]> => {
   }
 };
 
-const updateTask = async ({id, title, description, priority, deadline, status, tags, reminder, user}: Task): Promise<Task | null> => {
+const updateTask = async ({id, title, description, priority, deadline, status, tags}: Task): Promise<Task | null> => {
   try {
+    console.log('Updating task with ID:', id);
     const taskPrisma = await database.task.update({
       where: { id: id },
       data: {
@@ -85,11 +84,7 @@ const updateTask = async ({id, title, description, priority, deadline, status, t
         status,
         tags: {
           connect: tags.map((tag) => ({ id: tag.id })),
-        },
-        ...(reminder ? { reminder: { connect: { id: reminder.id } } } : {}),
-        user: {
-          connect: { id: user.id },
-        },
+        }
       },
       include: {
         tags: true,
@@ -130,6 +125,24 @@ const getTasksByUserId = async (userId: number): Promise<Task[]> => {
   }
 };
 
+const getTasksByUserName = async (name: string): Promise<Task[]> => {
+  try {
+    const tasksPrisma = await database.task.findMany({
+      where: {
+        user: {
+          name: name, 
+        }
+      },
+      include: { tags: true, reminder: true, user: true },
+    });
+    console.log("retrieved tasks from database:", tasksPrisma);
+    return tasksPrisma.map((taskPrisma) => Task.from(taskPrisma));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
 export default {
   createTask,
   getTaskById,
@@ -137,5 +150,6 @@ export default {
   updateTask,
   deleteTask,
   getTaskByTitle,
-  getTasksByUserId
+  getTasksByUserId,
+  getTasksByUserName,
 };

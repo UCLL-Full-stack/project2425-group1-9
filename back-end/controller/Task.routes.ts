@@ -45,7 +45,7 @@
 
 import express, { Request, Response } from 'express';
 import taskService from '../service/Task.service';
-import { TaskInput } from '../types';
+import { Role, TaskInput } from '../types';
 
 const taskRouter = express.Router();
 
@@ -54,6 +54,8 @@ const taskRouter = express.Router();
  * @swagger
  * /tasks:
  *   post:
+ *      security:
+ *       - bearerAuth: []
  *      summary: Create a new task.
  *      requestBody:
  *        required: true
@@ -85,6 +87,8 @@ taskRouter.post('/', async (req: Request, res: Response) => {
  * @swagger
  * /tasks:
  *   get:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Get a list of all tasks.
  *     responses:
  *       200:
@@ -98,10 +102,12 @@ taskRouter.post('/', async (req: Request, res: Response) => {
  */
 taskRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const tasks = await taskService.getAllTasks();
+        const request = req as Request & { auth: { name: string; role: Role } };
+        const { name, role } = request.auth;
+        const tasks = await taskService.getAllTasks({name, role});
         res.status(200).json(tasks);
     } catch (error) {
-        console.error(error); // Log the error for debugging
+        console.error(error);
         res.status(500).json({ error: 'Failed to retrieve tasks' });
     }
 });
@@ -111,6 +117,8 @@ taskRouter.get('/', async (req: Request, res: Response) => {
  * @swagger
  * /tasks/{id}:
  *  get:
+ *      security:
+ *       - bearerAuth: []
  *      summary: Get a task by id.
  *      parameters:
  *          - in: path
@@ -147,20 +155,22 @@ taskRouter.get('/:id', async (req: Request, res: Response) => {
  * @swagger
  * /tasks/{id}:
  *   put:
- *     summary: Update a task by id.
+ *     security:
+ *       - bearerAuth: [] 
+ *     summary: Update a task.
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
+ *         description: The ID of the task to update.
  *         schema:
  *           type: integer
- *         description: The task id.
- *       - in: body
- *         name: task
- *         required: true
- *         description: The updated task object.
- *         schema:
- *           $ref: '#/components/schemas/Task'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Task'
  *     responses:
  *       200:
  *         description: Successfully updated task.
@@ -168,10 +178,16 @@ taskRouter.get('/:id', async (req: Request, res: Response) => {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Task'
- */ 
+ *       400:
+ *         description: Invalid input.
+ *       404:
+ *         description: Task not found.
+ */
 taskRouter.put('/:id', async (req: Request, res: Response) => {
-    const taskId = Number(req.params.id);
-    const taskInput: TaskInput = req.body;
+    const taskInput: TaskInput = {
+        id: Number(req.params.id), // Extracting ID from the URL
+        ...req.body // Merging the request body
+    };
 
     try {
         const updatedTask = await taskService.updateTask(taskInput);
@@ -192,6 +208,8 @@ taskRouter.put('/:id', async (req: Request, res: Response) => {
  * @swagger
  * /tasks/{id}:
  *   delete:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Delete a task by id.
  *     parameters:
  *       - in: path
@@ -229,6 +247,8 @@ taskRouter.delete('/:id', async (req: Request, res: Response) => {
  * @swagger
  * /tasks/user/{id}:
  *  get:
+ *      security:
+ *       - bearerAuth: []
  *      summary: Get a task by userId.
  *      parameters:
  *          - in: path
@@ -253,8 +273,8 @@ taskRouter.get('/user/:userId', async (req, res) => {
     }
     res.json(tasks);
   } catch (error) {
-    console.error('Error retrieving tasks for user:', error); // Log the error for debugging
-    res.status(500).json({ error: 'Failed to retrieve tasks' });
+        console.error('Error retrieving tasks for user:', error); // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve tasks' });
   }
 });
 
