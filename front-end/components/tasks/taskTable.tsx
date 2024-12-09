@@ -17,7 +17,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
             <table className="table-auto border-collapse border border-gray-200 w-full text-left shadow-sm">
                 <thead className="bg-gray-800 text-white">
                     <tr>
-                        <th className="border border-gray-300 px-4 py-2">Title</th>
+                        <th className="border border-gray-300 pl-2 py-2">Title</th>
                         <th className="border border-gray-300 px-4 py-2">Description</th>
                         <th className="border border-gray-300 px-4 py-2">Priority</th>
                         <th className="border border-gray-300 px-10 py-2">Deadline</th>
@@ -30,7 +30,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
                 <tbody className="bg-white">
                     {tasks.map((task, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                            <td className="border border-gray-300 px-4 py-2">{task.title}</td>
+                            <td className="border border-gray-300 pl-2  py-2">{task.title}</td>
                             <td
                             className="border border-gray-300 px-4 py-2 truncate max-w-[200px] cursor-pointer"
                             title="Click to view full description"
