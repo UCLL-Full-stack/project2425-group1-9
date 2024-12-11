@@ -7,9 +7,11 @@
   },
   "dependencies": {
     "@types/react": "18.0.28",
+    "bcrypt": "^5.1.1",
     "bootstrap": "5.2.3",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.7",
+    "decrypt": "^0.0.1",
     "i18next": "^23.7.6",
     "next": "^14.2.6",
     "next-i18next": "^15.0.0",

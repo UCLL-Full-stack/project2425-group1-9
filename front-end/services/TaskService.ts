@@ -80,11 +80,27 @@ const updateTask = async (taskInput: Task): Promise<any> => {
   return response.json();
 };
 
+const deleteTask = async (id: number): Promise<void> => {
+  const token = JSON.parse(localStorage.getItem('loggedInUser'))?.token;
+  const response = await fetch(`${API_URL}/tasks/${id}`, {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+      },
+  });
+
+  if (!response.ok) {
+      throw new Error('Failed to delete task');
+  }
+};
+
 const taskService = {
   createTask,
   updateTask, 
   getTasksByUserId,
   getAllTasks,
+  deleteTask,
 
 };
 
