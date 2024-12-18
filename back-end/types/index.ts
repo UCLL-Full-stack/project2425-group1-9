@@ -1,9 +1,9 @@
 type UserInput = {
     id?: number;            
     name: string;            
-    email?: string;           
+    email: string;           
     password: string; 
-    role?: Role;
+    role: Role;
 };
 
 

@@ -15,7 +15,9 @@ const createReminder = async (reminderInput: Reminder): Promise<any> => {
   });
   
   if (!response.ok) {
-    throw new Error('Failed to create reminder');
+    const errorData = await response.json();
+    const errorMessage = errorData?.error || 'Failed to create reminder. Please try again later.';
+    throw new Error(errorMessage); 
   }
   return response.json();
 };

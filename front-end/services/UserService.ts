@@ -43,19 +43,23 @@ const getUserByName = async (name: string): Promise<User> => {
 
 
 const createUser = async (userInput: User) => {
-    const response = await fetch(`${API_URL}/users/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userInput),
-    });
-      
-    if (!response.ok) {
-      throw new Error('Failed to add user');
-    }
-    return response.json();
-  };
+  const response = await fetch(`${API_URL}/users/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userInput),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    const errorMessage = errorData?.error || 'Failed to create account. Please try again later.';
+    throw new Error(errorMessage); 
+  }
+
+  return response.json();
+};
+
 
 const loginUser = (user: User) => {
   return fetch(process.env.NEXT_PUBLIC_API_URL + "/users/login", {

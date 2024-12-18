@@ -12,12 +12,6 @@ const createUser = async ({id, name, email, password, role}: UserInput): Promise
         throw new Error(`User creation failed. Please try a different name.`);
     }
     const hashedPassword = await bcrypt.hash(password, 10); 
-    if (!email) {
-        throw new Error('Email is required.');
-    }
-    if (!role) {
-        throw new Error('Email is required.');
-    }
 
     const newUser = new User({
         id, name, email, password: hashedPassword, role
@@ -51,12 +45,6 @@ const updateUser = async ({id, name, email, password, role}: UserInput): Promise
     const existingUser = userRepository.getUserById({id});
     if (!existingUser) {
         throw new Error(`User with ID ${id} does not exist.`);
-    }
-    if (!email) {
-        throw new Error('Email is required.');
-    }
-    if (!role) {
-        throw new Error('Email is required.');
     }
 
     const updatedUser = new User({

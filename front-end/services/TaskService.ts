@@ -56,8 +56,11 @@ const createTask = async (taskInput: Task): Promise<any> => {
   });
   
   if (!response.ok) {
-    throw new Error('Failed to add task');
+    const errorData = await response.json();
+    const errorMessage = errorData?.error || 'Failed to create task. Please try again later.';
+    throw new Error(errorMessage); 
   }
+
   return response.json();
 };
 
@@ -73,10 +76,12 @@ const updateTask = async (taskInput: Task): Promise<any> => {
     },
     body: JSON.stringify(taskInput),
   });
-  
   if (!response.ok) {
-    throw new Error('Failed to update task');
+    const errorData = await response.json();
+    const errorMessage = errorData?.error || 'Failed to create task. Please try again later.';
+    throw new Error(errorMessage); 
   }
+  
   return response.json();
 };
 

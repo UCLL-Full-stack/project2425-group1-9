@@ -53,8 +53,8 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ task, onClose }) => {
         try {
             await taskService.updateTask(updatedTask);
             onClose(); 
-        } catch (error) {
-            setErrors(['Failed to update task. Please try again.']);
+        } catch (err: any) {
+            setErrors(Array.isArray(err.message) ? err.message : [err.message]);
         }
     };
 

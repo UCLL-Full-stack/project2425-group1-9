@@ -27,6 +27,7 @@ const UsersPage: React.FC = () => {
           setUsers(data);
         } else {
           const data = await userService.getUserByName(name); 
+          setUsers([data]);
         }
       } catch (error) {
         setError('Failed to load users');

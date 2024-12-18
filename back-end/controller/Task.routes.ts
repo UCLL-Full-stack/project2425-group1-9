@@ -193,9 +193,7 @@ taskRouter.put('/:id', async (req: Request, res: Response) => {
         const updatedTask = await taskService.updateTask(taskInput);
         if (updatedTask) {
             res.status(200).json(updatedTask);
-        } else {
-            res.status(404).json({ error: 'Task not found' });
-        }
+        } 
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to update task';
         res.status(400).json({ error: errorMessage });

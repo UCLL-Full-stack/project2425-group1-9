@@ -68,10 +68,11 @@ const UserLoginForm: React.FC = () => {
             }]);
         }
     } catch (error) {
-        setStatusMessages([{
-            message: "Error",
-            type: "error",
-        }]);
+      if (error instanceof Error) {
+        setPasswordError(error.message);  
+      } else {
+        setPasswordError("An unexpected error occurred.");
+      }
     }
 };
 

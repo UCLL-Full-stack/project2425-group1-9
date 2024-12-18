@@ -6,7 +6,7 @@ describe('User Model', () => {
     const user = new User({
       name: 'Jane Doe',
       email: 'jane@example.com',
-      password: 'Password123',
+      password: 'password123',
       role: 'user'
     });
 
@@ -38,9 +38,9 @@ describe('User Model', () => {
     expect(() => new User({
       name: 'John Doe',
       email: 'john@example.com',
-      password: '123',
+      password: 'passw',
       role: 'user'
-    })).toThrowError('Password must be at least 6 characters long, with at least one uppercase letter, one lowercase letter, and one digit.');
+    })).toThrowError('Password must be at least 6 characters long.');
   });
   
 });

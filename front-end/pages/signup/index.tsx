@@ -19,8 +19,8 @@ const SignUpPage: React.FC = () => {
     try {
       await userService.createUser(userInput);
       router.push('/login'); 
-    } catch (err) {
-      setError('Failed to create account. Please try again later.');
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }

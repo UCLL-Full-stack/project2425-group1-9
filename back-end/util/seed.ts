@@ -12,18 +12,18 @@ const seedDatabase = async () => {
 
   const user1 = await database.user.create({
     data: {
-      name: 'Alice Smith',
-      email: 'alice@example.com',
-      password: await bcrypt.hash('password123', 12),
+      name: 'User1',
+      email: 'user1@example.com',
+      password: await bcrypt.hash('Password123', 12),
       role: 'admin'
     },
   });
 
   const user2 = await database.user.create({
     data: {
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-      password: await bcrypt.hash('password123', 12),
+      name: 'User2',
+      email: 'user2@example.com',
+      password: await bcrypt.hash('Password123', 12),
       role: 'user'
     },
   });

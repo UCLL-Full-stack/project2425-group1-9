@@ -51,6 +51,10 @@ export class Task {
     if (!Array.isArray(this.tags)) {
       throw new Error('Tags must be an array of Tag instances.');
     }
+    if (!this.description || typeof this.description !== 'string' || this.title.trim().length === 0) {
+      throw new Error('Task description is required and cannot be empty.');
+    }
+    
 }
 
   getTags(): Tag[] {

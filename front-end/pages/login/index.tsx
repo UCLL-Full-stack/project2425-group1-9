@@ -3,8 +3,8 @@ import Header from "../../components/header";
 import UserLoginForm from "../../components/users/UserLoginForm";
 
 const predefinedUsers = [
-  { username: "user1", password: "user1", role: "admin" },
-  { username: "user2", password: "user2", role: "user" },
+  { username: "User1", password: "Password123", role: "admin" },
+  { username: "User2", password: "Password123", role: "user" },
   { username: "tester", password: "test123", role: "tester" },
 ];
 

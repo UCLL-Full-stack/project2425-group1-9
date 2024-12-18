@@ -77,9 +77,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ onClose }) => {
         try {
             await taskService.createTask(task);
             onClose(); 
-        } catch (error) {
-            console.log(task)
-            setErrors(['Failed to create task. Please try again.']);
+        } catch (err: any) {
+            setErrors(Array.isArray(err.message) ? err.message : [err.message]);
         }
     };
 
