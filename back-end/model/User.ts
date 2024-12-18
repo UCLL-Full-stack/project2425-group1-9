@@ -32,9 +32,10 @@ export class User {
     if (!this.email || typeof this.email !== 'string' || !emailPattern.test(this.email)) {
       throw new Error('A valid email is required.');
     }
-    if (!this.password || typeof this.password !== 'string' || this.password.length < 6) {
-      throw new Error('Password is required and must be at least 6 characters long.');
-    }
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
+  if (!this.password || typeof this.password !== 'string' || !passwordPattern.test(this.password)) {
+    throw new Error('Password must be at least 6 characters long, with at least one uppercase letter, one lowercase letter, and one digit.');
+  }
     
 }
   

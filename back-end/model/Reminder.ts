@@ -31,6 +31,10 @@ export class Reminder {
     return this.reminderTime;
   }
 
+  getReminderMessage(): string {
+    return this.reminderMessage
+  }
+
   static from({id, reminderTime, reminderMessage}: ReminderPrisma): Reminder {
         return new Reminder({
             id,
