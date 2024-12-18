@@ -264,4 +264,43 @@ userRouter.post('/login', async (req: Request, res: Response) => {
         res.status(400).json({ error: errorMessage });    }
 });
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Delete a user by id.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The user id.
+ *     responses:
+ *       200:
+ *         description: Successfully deleted user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */ 
+userRouter.delete('/:id', async (req: Request, res: Response) => {
+    const userId = Number(req.params.id);
+    try {
+        const deleted = await userService.deleteUser(userId);
+        if (deleted) {
+            res.status(200).json({ message: 'User deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to delete User' });
+    }
+});
+
 export {userRouter};

@@ -49,12 +49,16 @@ const seedDatabase = async () => {
   const reminder1 = await database.reminder.create({
     data: {
       reminderTime: new Date(Date.now() + 3600000), // 1 hour from now
+      reminderMessage: "Finish your task!",
+      sent: false
     },
   });
 
   const reminder2 = await database.reminder.create({
     data: {
       reminderTime: new Date(Date.now() + 7200000), // 2 hours from now
+      reminderMessage: "Finish your task!",
+      sent: false
     },
   });
 

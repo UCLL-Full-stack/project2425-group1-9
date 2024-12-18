@@ -39,5 +39,7 @@ model Tag {
 model Reminder {
   id          Int       @id @default(autoincrement())
   reminderTime DateTime
+  reminderMessage String
+  sent        Boolean @default(false)
   task        Task?   
 }

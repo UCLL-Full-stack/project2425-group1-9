@@ -3,19 +3,23 @@ import { Reminder as ReminderPrisma} from '@prisma/client';
 export class Reminder {
   readonly id?: number;
   readonly reminderTime: Date;
+  readonly reminderMessage: string
+  sent: boolean;
 
-  constructor(reminder: { id?: number; reminderTime: Date;}) {
+  constructor(reminder: { id?: number; reminderTime: Date; reminderMessage: string; sent?: boolean}) {
     this.id = reminder.id;
     this.reminderTime = reminder.reminderTime;
-    this.validate(reminder.reminderTime);
+    this.reminderMessage = reminder.reminderMessage
+    this.sent = reminder.sent || false
+    this.validate(reminder.reminderTime, reminder.reminderMessage);
   }
 
-  validate(reminderTime: Date) {
+  validate(reminderTime: Date, reminderMessage: string) {
     if (!reminderTime) {
       throw new Error('Reminder time is required.');
     }
-    if (reminderTime <= new Date()) {
-      throw new Error('Reminder time must be in the future.');
+    if (!reminderMessage) {
+      throw new Error('Reminder message is required.');
     }
   }
 
@@ -27,10 +31,11 @@ export class Reminder {
     return this.reminderTime;
   }
 
-  static from({id, reminderTime}: ReminderPrisma): Reminder {
+  static from({id, reminderTime, reminderMessage}: ReminderPrisma): Reminder {
         return new Reminder({
             id,
-            reminderTime
+            reminderTime,
+            reminderMessage
         });
     }
 }

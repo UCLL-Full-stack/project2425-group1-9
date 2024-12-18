@@ -3,7 +3,7 @@ import database from './database';
 
 const createTask = async ({title, description, priority, deadline, tags, user }: Task): Promise<Task> => {
   try {
-    const status = 'not finished';
+    const status = 'not done';
     const createdTask = await database.task.create({
       data: {
         title,
@@ -66,14 +66,12 @@ const getAllTasks = async (): Promise<Task[]> => {
     return taskPrisma.map((taskPrisma) => Task.from(taskPrisma));
   } catch (error) {
     console.error(error);
-    console.error('Error retrieving tasks:', error);
     throw new Error('Database error. See server log for details.');
   }
 };
 
-const updateTask = async ({id, title, description, priority, deadline, status, tags}: Task): Promise<Task | null> => {
+const updateTask = async ({id, title, description, priority, deadline, status, tags, reminder}: Task): Promise<Task | null> => {
   try {
-    console.log('Updating task with ID:', id);
     const taskPrisma = await database.task.update({
       where: { id: id },
       data: {
@@ -84,13 +82,14 @@ const updateTask = async ({id, title, description, priority, deadline, status, t
         status,
         tags: {
           connect: tags.map((tag) => ({ id: tag.id })),
-        }
-      },
+        },
+        ...(reminder ? { reminder: { connect: { id: reminder.id } } } : {}),
+        },
       include: {
         tags: true,
         reminder: true,
         user: true,
-      },
+      }
     });
     return Task.from(taskPrisma);
   } catch (error) {
@@ -117,7 +116,6 @@ const getTasksByUserId = async (userId: number): Promise<Task[]> => {
       where: { userId: userId },
       include: { tags: true, reminder: true, user: true },
     });
-    console.log("retrieved tasks from database:", tasksPrisma)
     return tasksPrisma.map((taskPrisma) => Task.from(taskPrisma));
   } catch (error) {
     console.error(error);
@@ -135,8 +133,20 @@ const getTasksByUserName = async (name: string): Promise<Task[]> => {
       },
       include: { tags: true, reminder: true, user: true },
     });
-    console.log("retrieved tasks from database:", tasksPrisma);
     return tasksPrisma.map((taskPrisma) => Task.from(taskPrisma));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+const getTaskByReminderId = async (reminderId: number): Promise<Task | null> => {
+  try {
+    const taskPrisma = await database.task.findFirst({
+      where: { reminderId: reminderId },
+      include: { tags: true, reminder: true, user: true },
+    });
+    return taskPrisma ? Task.from(taskPrisma) : null; // Return null if no task is found
   } catch (error) {
     console.error(error);
     throw new Error('Database error. See server log for details.');
@@ -152,4 +162,5 @@ export default {
   getTaskByTitle,
   getTasksByUserId,
   getTasksByUserName,
+  getTaskByReminderId,
 };

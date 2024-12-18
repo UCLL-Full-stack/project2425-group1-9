@@ -2,6 +2,7 @@ import { Tag } from './Tag'
 import { Reminder } from './Reminder'; 
 import { Task as TaskPrisma, Reminder as ReminderPrisma, Tag as TagPrisma, User as UserPrisma} from '@prisma/client';
 import { User } from './User';
+import { ReminderInput } from '../types';
 
 export class Task {
   readonly id?: number;
@@ -11,7 +12,7 @@ export class Task {
   readonly deadline: Date;
   readonly status: string;
   readonly tags: Tag[];
-  readonly reminder?: Reminder;
+  public reminder?: Reminder;
   readonly user: User;
 
   constructor(task: {

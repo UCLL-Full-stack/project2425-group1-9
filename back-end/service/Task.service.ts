@@ -1,11 +1,12 @@
 import taskRepository from '../repository/Task.db';
-import { TaskInput } from '../types'; 
+import { ReminderInput, TaskInput } from '../types'; 
 import { Task } from '../model/Task';
 import { User } from '../model/User';
 import { Tag } from '../model/Tag';
 import { Reminder } from '../model/Reminder';
 import userDb from '../repository/User.db'
 import tagRepository from '../repository/Tag.db'
+import ReminderService from './Reminder.service';
 
 const createTask = async ({ title, description, priority, deadline, status, tags: TagInput, user: UserInput }: TaskInput): Promise<Task> => {
     const existingTask = await taskRepository.getTaskByTitle(title);
@@ -33,7 +34,7 @@ const createTask = async ({ title, description, priority, deadline, status, tags
         description,
         priority,
         deadline,
-        status: status || 'not finished',
+        status: status,
         tags,
         user 
     });
@@ -62,24 +63,21 @@ const getAllTasks = async ({
         throw new Error('You are not authorized to access this resource.');
     }
 };
+
 const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => {
-    console.log('Received updateTask input:', updatedTaskInput);
     if (!updatedTaskInput.id) {
         throw new Error(`Task update failed. Please provide a valid id.`);
     }
 
     const existingTask = await taskRepository.getTaskById({id: updatedTaskInput.id});
-    console.log('Existing task found:', existingTask);
     if (!existingTask) {
         throw new Error(`Task with ID ${updatedTaskInput.id} does not exist.`);
     }
-
-    if (updatedTaskInput.deadline <= new Date()) {
-        throw new Error('Updated task deadline must be in the future.');
-    }
+    
     
     const tagInstances = updatedTaskInput.tags.map(tagInput => new Tag(tagInput));
-
+        
+    const reminder = updatedTaskInput.reminder ? new Reminder(updatedTaskInput.reminder) : existingTask.reminder;
 
     const updatedTask = new Task({
         id: existingTask.id,
@@ -89,6 +87,7 @@ const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => 
         deadline: updatedTaskInput.deadline,
         status: updatedTaskInput.status, 
         tags: tagInstances,
+        reminder,
         user: existingTask.getUser()
     });
 
@@ -96,17 +95,17 @@ const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => 
 };
 
 const deleteTask = async (id: number): Promise<boolean> => {
-    const existingTask = await taskRepository.getTaskById({id});
+    const existingTask = await taskRepository.getTaskById({ id });
     if (!existingTask) {
         throw new Error(`Task with ID ${id} does not exist.`);
     }
 
-    if (existingTask.getStatus() === 'finished') {
-        throw new Error('Completed tasks cannot be deleted.');
+    if (existingTask.reminder && existingTask.reminder.id !== undefined) {
+        await ReminderService.deleteReminder(existingTask.reminder.id); 
     }
-
-    return taskRepository.deleteTask(id);
+    return await taskRepository.deleteTask(id);
 };
+
 
 const getTaskByUserId = async (UserId: number): Promise<Task[] | null> => {
     const task = await taskRepository.getTasksByUserId( UserId );
@@ -124,7 +123,6 @@ const getTasksByUserName = async (userName: string): Promise<Task[]> => {
 
 
 
-
 export default {
     createTask,
     getTaskById,
@@ -132,5 +130,5 @@ export default {
     updateTask,
     deleteTask,
     getTaskByUserId,
-    getTasksByUserName
+    getTasksByUserName,
 };

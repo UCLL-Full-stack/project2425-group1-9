@@ -20,12 +20,13 @@ export type Task = {
 
 
 export type Reminder = {
-    id: number;            
+    id?: number;            
     reminderTime: Date;  
+    reminderMessage: string;
 };
 
 export type Tag = {
-    id: number;             
+    id?: number;             
     name: string;            
 };
 

@@ -9,7 +9,8 @@ type UserInput = {
 
 type ReminderInput = {
     id?: number;            
-    reminderTime: Date;  
+    reminderTime: Date; 
+    reminderMessage: string; 
 };
 
 type TagInput = {

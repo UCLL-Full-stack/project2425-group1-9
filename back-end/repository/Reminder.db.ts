@@ -6,6 +6,7 @@ const createReminder = async (reminderData: Reminder): Promise<Reminder> => {
     const createdReminder = await database.reminder.create({
       data: {
         reminderTime: reminderData.reminderTime,
+        reminderMessage: reminderData.reminderMessage
       },
     });
     return Reminder.from(createdReminder);
@@ -29,7 +30,7 @@ const getReminderById = async (id: number): Promise<Reminder | null> => {
 
 const getAllReminders = async (): Promise<Reminder[]> => {
   try {
-    const remindersPrisma = await database.reminder.findMany();
+    const remindersPrisma = await database.reminder.findMany({where: {sent: false}});
     return remindersPrisma.map((reminderPrisma) => Reminder.from(reminderPrisma));
   } catch (error) {
     console.error(error);
@@ -43,6 +44,8 @@ const updateReminder = async (updatedReminderData: Reminder): Promise<Reminder |
       where: { id: updatedReminderData.id },
       data: {
         reminderTime: updatedReminderData.reminderTime,
+        reminderMessage: updatedReminderData.reminderMessage, 
+        sent: updatedReminderData.sent, 
       },
     });
     return Reminder.from(updatedReminder);
@@ -51,7 +54,6 @@ const updateReminder = async (updatedReminderData: Reminder): Promise<Reminder |
     throw new Error('Database error. See server log for details.');
   }
 };
-
 const deleteReminder = async (id: number): Promise<boolean> => {
   try {
     await database.reminder.delete({

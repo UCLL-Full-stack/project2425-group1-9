@@ -19,7 +19,7 @@ const Home: React.FC = () => {
 
         <div className={styles.description}>
           <p>
-            The todo app lets you see different users and their tasks.
+            With the Todo App you can register your tasks and always finish your tasks on time!
           </p>
         </div>
       </main>

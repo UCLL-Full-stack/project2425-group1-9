@@ -1,12 +1,12 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import useSWR, { mutate } from 'swr';
 import { Task } from '../../types';
 import taskService from '../../services/TaskService';
 import TaskTable from '../../components/tasks/taskTable';
-import { useEffect, useState } from 'react';
-import Header from '@/components/header';
-import AddTaskForm from '../../components/tasks/taskAddForm'; // Import the form component
+import AddTaskForm from '../../components/tasks/taskAddForm';
 import EditTaskForm from '@/components/tasks/taskEditForm';
+import Header from '@/components/header';
 
 const fetchTasks = async () => {
     const tasks = await taskService.getAllTasks();
@@ -17,6 +17,11 @@ const UserTasksPage: React.FC = () => {
     const { data: tasks, error, isLoading } = useSWR('userTasks', fetchTasks);
     const [showForm, setShowForm] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
+    const [filter, setFilter] = useState({
+        deadline: '', 
+        status: '', 
+        priority: '',
+    });
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -33,7 +38,16 @@ const UserTasksPage: React.FC = () => {
     const handleEditTask = (task: Task) => {
         setEditingTask(task);
     };
-    
+
+    const filteredTasks = tasks?.filter(task => {
+    const taskDeadline = new Date(task.deadline).toISOString().split('T')[0]; 
+    const matchesDeadline = !filter.deadline || taskDeadline === filter.deadline;
+    const matchesStatus = !filter.status || task.status === filter.status;
+    const matchesPriority = !filter.priority || task.priority === filter.priority;
+
+    return matchesDeadline && matchesStatus && matchesPriority;
+});
+
 
     return (
         <>
@@ -44,6 +58,44 @@ const UserTasksPage: React.FC = () => {
             <main className="bg-gray-100 min-h-screen flex flex-col items-center py-8">
                 <div className="w-full max-w-7xl px-2">
                     <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">Your Tasks</h1>
+                    
+                    <div className="flex justify-center space-x-4 mb-6">
+                        <div>
+                            <label className="block font-medium text-gray-700 mb-1">Filter by Deadline</label>
+                            <input
+                                type="date"
+                                value={filter.deadline}
+                                onChange={(e) => setFilter({ ...filter, deadline: e.target.value })}
+                                className="border border-gray-300 rounded-md p-2"
+                            />
+                        </div>
+                        <div>
+                            <label className="block font-medium text-gray-700 mb-1">Filter by Status</label>
+                            <select
+                                value={filter.status}
+                                onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                                className="border border-gray-300 rounded-md p-2"
+                            >
+                                <option value="">All</option>
+                                <option value="done">Done</option>
+                                <option value="not done">Not Done</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block font-medium text-gray-700 mb-1">Filter by Priority</label>
+                            <select
+                                value={filter.priority}
+                                onChange={(e) => setFilter({ ...filter, priority: e.target.value })}
+                                className="border border-gray-300 rounded-md p-2"
+                            >
+                                <option value="">All</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div className="text-center mb-4">
                         <button
                             onClick={() => setShowForm(true)}
@@ -55,23 +107,22 @@ const UserTasksPage: React.FC = () => {
 
                     {isLoading && <p className="text-center text-blue-500">Loading tasks...</p>}
                     {error && (
-                        <p className="text-center text-red-500">Failed to load tasks. Please try again.</p>
+                        <p className="text-center text-red-500">You are not authorized to view this page. Please log in.</p>
                     )}
 
-                    {!isLoading && !error && tasks?.length === 0 && (
-                        <p className="text-center text-gray-600">No tasks found for this user.</p>
+                    {!isLoading && !error && filteredTasks?.length === 0 && (
+                        <p className="text-center text-gray-600">No tasks match your filters.</p>
                     )}
 
-                    {!isLoading && !error && tasks?.length > 0 && (
-                        <TaskTable tasks={tasks} onEdit={handleEditTask} />
+                    {!isLoading && !error && filteredTasks?.length > 0 && (
+                        <TaskTable tasks={filteredTasks} onEdit={handleEditTask} />
                     )}
                 </div>
 
                 {showForm && <AddTaskForm onClose={handleFormClose} />}
-
                 {editingTask && (
-                <EditTaskForm task={editingTask} onClose={() => setEditingTask(null)} />)}
-
+                    <EditTaskForm task={editingTask} onClose={() => setEditingTask(null)} />
+                )}
             </main>
         </>
     );

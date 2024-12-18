@@ -45,7 +45,7 @@
 
 import express, { Request, Response } from 'express';
 import taskService from '../service/Task.service';
-import { Role, TaskInput } from '../types';
+import { ReminderInput, Role, TaskInput } from '../types';
 
 const taskRouter = express.Router();
 
@@ -185,8 +185,8 @@ taskRouter.get('/:id', async (req: Request, res: Response) => {
  */
 taskRouter.put('/:id', async (req: Request, res: Response) => {
     const taskInput: TaskInput = {
-        id: Number(req.params.id), // Extracting ID from the URL
-        ...req.body // Merging the request body
+        id: Number(req.params.id),
+        ...req.body 
     };
 
     try {
@@ -277,9 +277,6 @@ taskRouter.get('/user/:userId', async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve tasks' });
   }
 });
-
-
-
 
 
 export {taskRouter};

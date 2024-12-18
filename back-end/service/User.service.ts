@@ -3,6 +3,8 @@ import { AuthenticationResponse, Role, UserInput } from '../types';
 import { User } from '../model/User';
 import bcrypt from 'bcrypt'; 
 import { generateJwtToken } from '../util/jwt';
+import taskRepository from '../repository/Task.db'
+import taskService from '../service/Task.service'
 
 const createUser = async ({id, name, email, password, role}: UserInput): Promise<User> => {
     const existingUser = await userRepository.findUserByName(name);
@@ -64,13 +66,24 @@ const updateUser = async ({id, name, email, password, role}: UserInput): Promise
     return userRepository.updateUser(updatedUser);
 };
 
+
 const deleteUser = async (id: number): Promise<boolean> => {
-    const existingUser = userRepository.getUserById({id});
+    const existingUser = await userRepository.getUserById({ id });
     if (!existingUser) {
         throw new Error(`User with ID ${id} does not exist.`);
     }
-    return userRepository.deleteUser(id);
+    const userTasks = await taskRepository.getTasksByUserId(id);
+    for (const task of userTasks) {
+        if (task.id !== undefined) { 
+            await taskService.deleteTask(task.id);
+        }
+    }
+
+    return await userRepository.deleteUser(id);
 };
+
+
+
 
 const authenticate = async ({ name, password }:UserInput): Promise<AuthenticationResponse> => {
   const user = await userRepository.findUserByName(name);
