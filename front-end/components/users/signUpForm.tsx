@@ -30,7 +30,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, loading, error }) => 
   return (
     <form onSubmit={handleSubmit}>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-
+    
       <div className="mb-4">
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
         <input
@@ -40,20 +40,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, loading, error }) => 
           placeholder="Enter your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required
         />
       </div>
 
       <div className="mb-4">
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
         <input
-          type="email"
+          type="text"
           id="email"
           className="w-full mt-1 p-2 border border-gray-300 rounded-lg"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
         />
       </div>
 

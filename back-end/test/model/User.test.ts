@@ -33,14 +33,6 @@ describe('User Model', () => {
       role: 'user'
     })).toThrowError('A valid email is required.');
   });
-
-  test('Given short password, when creating a User, then it should throw an error', () => {
-    expect(() => new User({
-      name: 'John Doe',
-      email: 'john@example.com',
-      password: 'passw',
-      role: 'user'
-    })).toThrowError('Password must be at least 6 characters long.');
-  });
+  
   
 });

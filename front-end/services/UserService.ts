@@ -12,7 +12,9 @@ const getAllUsers = async (): Promise<User[]> => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch users');
+    const errorData = await response.json();
+    const errorMessage = errorData?.error;
+    throw new Error(errorMessage); 
   }
   return response.json(); 
 };
@@ -36,7 +38,9 @@ const getUserByName = async (name: string): Promise<User> => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch users');
+    const errorData = await response.json();
+    const errorMessage = errorData?.error;
+    throw new Error(errorMessage); 
   }
   return response.json(); 
 };

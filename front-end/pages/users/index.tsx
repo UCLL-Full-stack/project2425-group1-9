@@ -17,6 +17,7 @@ const UsersPage: React.FC = () => {
 
 
   useEffect(() => {
+
     const role = JSON.parse(localStorage.getItem('loggedInUser'))?.role;
     const name = JSON.parse(localStorage.getItem('loggedInUser'))?.name
     setUserRole(role)
@@ -27,12 +28,14 @@ const UsersPage: React.FC = () => {
         if (role === 'admin') {
           const data = await userService.getAllUsers();
           setUsers(data);
-        } else {
+        } else if (role === 'user'){
           const data = await userService.getUserByName(name); 
           setUsers([data]);
+        } else {
+          setError('You are not authorized to view this page');
         }
-      } catch (error) {
-        setError('Failed to load users');
+      } catch (error: any) {
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -44,13 +47,13 @@ const UsersPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>{userRole === 'admin' ? 'All Users' : 'My Profile'}</title>
+            <title>Users</title>
       </Head>
       <Header />
       <main className="bg-gray-100 min-h-screen flex flex-col items-center py-8">
         <div className="w-full max-w-6xl px-4">
           <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
-            {userRole === 'admin' ? 'All Users' : 'My Profile'}
+            {userRole === 'admin' ? 'All Users' : userRole === 'user' ? 'My Profile' : 'Unauthorized'}
           </h1>
 
           {loading && <p className="text-center text-blue-500">Loading users...</p>}

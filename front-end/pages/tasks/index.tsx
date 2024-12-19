@@ -17,6 +17,7 @@ const fetchTasks = async () => {
 };
 
 const UserTasksPage: React.FC = () => {
+    const [userRole, setUserRole] = useState<string | null>(null); 
     const { data: tasks, error, isLoading } = useSWR('userTasks', fetchTasks);
     const [showForm, setShowForm] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -27,10 +28,15 @@ const UserTasksPage: React.FC = () => {
     });
 
     useEffect(() => {
+
+        const role = JSON.parse(localStorage.getItem('loggedInUser'))?.role;
+        setUserRole(role)
+
         const interval = setInterval(() => {
             mutate('userTasks');
         }, 1000);
         return () => clearInterval(interval);
+
     }, []);
 
     const handleFormClose = () => {
@@ -60,53 +66,62 @@ const UserTasksPage: React.FC = () => {
             <Header />
             <main className="bg-gray-100 min-h-screen flex flex-col items-center py-8">
                 <div className="w-full max-w-7xl px-2">
-                    <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">Your Tasks</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
+                        {userRole === 'admin' ? 'All Users Tasks' : userRole === 'user' ? 'Your Tasks' : 'Unauthorized'}
+                    </h1>
                     
                     <div className="flex justify-center space-x-4 mb-6">
-                        <div>
-                            <label className="block font-medium text-gray-700 mb-1">Filter by Deadline</label>
-                            <input
-                                type="date"
-                                value={filter.deadline}
-                                onChange={(e) => setFilter({ ...filter, deadline: e.target.value })}
-                                className="border border-gray-300 rounded-md p-2"
-                            />
-                        </div>
-                        <div>
-                            <label className="block font-medium text-gray-700 mb-1">Filter by Status</label>
-                            <select
-                                value={filter.status}
-                                onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-                                className="border border-gray-300 rounded-md p-2"
-                            >
-                                <option value="">All</option>
-                                <option value="done">Done</option>
-                                <option value="not done">Not Done</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block font-medium text-gray-700 mb-1">Filter by Priority</label>
-                            <select
-                                value={filter.priority}
-                                onChange={(e) => setFilter({ ...filter, priority: e.target.value })}
-                                className="border border-gray-300 rounded-md p-2"
-                            >
-                                <option value="">All</option>
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                            </select>
-                        </div>
+                        {userRole && (userRole === 'admin' || userRole === 'user') && (
+                            <>
+                                <div>
+                                    <label className="block font-medium text-gray-700 mb-1">Filter by Deadline</label>
+                                    <input
+                                        type="date"
+                                        value={filter.deadline}
+                                        onChange={(e) => setFilter({ ...filter, deadline: e.target.value })}
+                                        className="border border-gray-300 rounded-md p-2"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block font-medium text-gray-700 mb-1">Filter by Status</label>
+                                    <select
+                                        value={filter.status}
+                                        onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                                        className="border border-gray-300 rounded-md p-2"
+                                    >
+                                        <option value="">All</option>
+                                        <option value="done">Done</option>
+                                        <option value="not done">Not Done</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block font-medium text-gray-700 mb-1">Filter by Priority</label>
+                                    <select
+                                        value={filter.priority}
+                                        onChange={(e) => setFilter({ ...filter, priority: e.target.value })}
+                                        className="border border-gray-300 rounded-md p-2"
+                                    >
+                                        <option value="">All</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+                            </>
+                        )}
                     </div>
 
-                    <div className="text-center mb-4">
-                        <button
-                            onClick={() => setShowForm(true)}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition duration-300"
-                        >
-                            Add Task
-                        </button>
-                    </div>
+                    {userRole && (userRole === 'admin' || userRole === 'user') && (
+                        <div className="text-center mb-4">
+                            <button
+                                onClick={() => setShowForm(true)}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition duration-300"
+                            >
+                                Add Task
+                            </button>
+                        </div>
+                    )}
+
 
                     {isLoading && <p className="text-center text-blue-500">Loading tasks...</p>}
                     {error && (
