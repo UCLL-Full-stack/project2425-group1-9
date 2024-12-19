@@ -10,5 +10,15 @@
   "login": "Iniciar Sesión",
   "signup": "Registrarse",
   "logout": "Cerrar Sesión",
-  "header_welcome": "¡Bienvenido"
+  "header_welcome": "¡Bienvenido",
+  "userpage": {
+    "usersname": "Nombre",
+    "usersemail": "Correo Electrónico",
+    "usersaction": "Acción",
+    "allusers": "Todos los Usuarios",
+    "myprofile": "Mi Perfil"
+  },
+  "taskspage": {
+    "yourtasks": "bobber"
+  }
 }

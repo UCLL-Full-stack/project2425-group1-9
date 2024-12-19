@@ -62,6 +62,7 @@ const Header: React.FC = () => {
             <div className="nav-link px-4 fs-5 text-white">
               {t('welcome')}, {loggedInUser.name}!
             </div>
+            <LanguageSwitcher />
           </>
         )}
       </nav>

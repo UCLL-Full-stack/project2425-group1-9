@@ -10,5 +10,15 @@
   "login": "Login",
   "signup": "Signup",
   "logout": "Logout",
-  "header_welcome": "Welcome"
+  "header_welcome": "Welcome",
+  "userspage": {
+    "usersname":  "Name",
+    "usersemail": "Email",
+    "usersaction": "Action",
+    "allusers": "All Users",
+    "myprofile": "My Profile"
+  },
+  "taskspage": {
+    "yourtasks": "Your Tasks"
+  }
 }
