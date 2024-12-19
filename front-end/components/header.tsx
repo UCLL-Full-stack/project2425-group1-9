@@ -1,9 +1,14 @@
 import { User } from '@/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import LanguageSwitcher from '../components/Language/LanguageSelector';
+import { useTranslation } from 'next-i18next';
+
 
 const Header: React.FC = () => {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const { t } = useTranslation('common'); 
+
 
   useEffect(() => {
     const user = localStorage.getItem('loggedInUser');
@@ -20,27 +25,28 @@ const Header: React.FC = () => {
   return (
     <header className="p-3 mb-3 border-bottom bg-dark bg-gradient">
       <a className="fs-2 d-flex justify-content-center mb-2 mb-lg-0 text-white-50 text-decoration-none">
-        Todo App
+        {t('todo_app')}
       </a>
       <nav className="nav justify-content-center">
         <Link href="/" className="nav-link px-4 fs-5 text-white">
-          Home
+          {t('home')}
         </Link>
         <Link href="/users" className="nav-link px-4 fs-5 text-white">
-          Users
+          {t('users')}
         </Link>
         <Link href="/tasks" className="nav-link px-4 fs-5 text-white">
-          Tasks
+          {t('tasks')}
         </Link>
 
         {!loggedInUser && (
           <>
             <Link href="/login" className="nav-link px-4 fs-5 text-white">
-              Login
+              {t('login')}
             </Link>
             <Link href="/signup" className="nav-link px-4 fs-5 text-white">
-              Signup
+              {t('signup')}
             </Link>
+            <LanguageSwitcher />
           </>
         )}
 
@@ -51,10 +57,10 @@ const Header: React.FC = () => {
               onClick={handleClick}
               className="nav-link px-4 fs-5 text-white"
             >
-              Logout
+              {t('logout')}
             </a>
             <div className="nav-link px-4 fs-5 text-white">
-              Welcome, {loggedInUser.name}!
+              {t('welcome')}, {loggedInUser.name}!
             </div>
           </>
         )}
@@ -62,5 +68,7 @@ const Header: React.FC = () => {
     </header>
   );
 };
+
+
 
 export default Header;

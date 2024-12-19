@@ -1,0 +1,14 @@
+{
+  "todos": "Tareas",
+  "courses_app": "Aplicación de Cursos",
+  "welcome": "¡Bienvenido!",
+  "todo_description": "Con la Aplicación de Tareas puedes registrar tus tareas y siempre terminarlas a tiempo.",
+  "todo_app": "Aplicación de Tareas",
+  "home": "Inicio",
+  "users": "Usuarios",
+  "tasks": "Tareas",
+  "login": "Iniciar Sesión",
+  "signup": "Registrarse",
+  "logout": "Cerrar Sesión",
+  "header_welcome": "¡Bienvenido"
+}

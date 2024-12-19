@@ -6,6 +6,8 @@ import { User } from '../../types';
 import UserTable from '../../components/users/userTable'; 
 import Head from 'next/head';
 import Header from '@/components/header';
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"; 
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -67,6 +69,15 @@ const UsersPage: React.FC = () => {
       </main>
     </>
   );
+};
+
+
+export const getServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+    },
+  };
 };
 
 export default UsersPage;

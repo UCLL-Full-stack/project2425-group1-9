@@ -1,6 +1,8 @@
 import Head from "next/head";
 import Header from "../../components/header";
 import UserLoginForm from "../../components/users/UserLoginForm";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"; 
 
 const predefinedUsers = [
   { username: "User1", password: "Password123", role: "admin" },
@@ -47,6 +49,14 @@ const Login: React.FC = () => {
       </main>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+    },
+  };
 };
 
 export default Login;

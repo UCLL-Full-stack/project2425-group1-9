@@ -1,30 +1,41 @@
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import Header from '../components/header';
 import styles from '../styles/home.module.css';
 
 const Home: React.FC = () => {
+  const { t } = useTranslation('common'); // Gebruik vertalingen uit de 'common.json'
+
   return (
     <>
       <Head>
-        <title>Todos</title>
-        <meta name="description" content="Courses app" />
+        <title>{t('todos')}</title>
+        <meta name="description" content={t('courses_app')} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
       <main className={styles.main}>
         <span>
-          <h1>Welcome!</h1>
+          <h1>{t('welcome')}</h1>
         </span>
 
         <div className={styles.description}>
-          <p>
-            With the Todo App you can register your tasks and always finish your tasks on time!
-          </p>
+          <p>{t('todo_description')}</p>
         </div>
       </main>
     </>
   );
+};
+
+// Server-side vertalingen
+export const getServerSideProps = async ({ locale }: { locale: string }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+    },
+  };
 };
 
 export default Home;

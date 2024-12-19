@@ -6,6 +6,9 @@ import userService from '../../services/UserService';
 import SignupForm from '../../components/users/signUpForm';  // Make sure to create the form
 import Header from '../../components/header';  // Import Header
 import { User } from '@/types';
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"; 
+
 
 const SignUpPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -46,6 +49,14 @@ const SignUpPage: React.FC = () => {
       </div>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+    },
+  };
 };
 
 export default SignUpPage;

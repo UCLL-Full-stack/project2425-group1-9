@@ -7,6 +7,9 @@ import TaskTable from '../../components/tasks/taskTable';
 import AddTaskForm from '../../components/tasks/taskAddForm';
 import EditTaskForm from '@/components/tasks/taskEditForm';
 import Header from '@/components/header';
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"; 
+
 
 const fetchTasks = async () => {
     const tasks = await taskService.getAllTasks();
@@ -126,6 +129,14 @@ const UserTasksPage: React.FC = () => {
             </main>
         </>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+    },
+  };
 };
 
 export default UserTasksPage;
