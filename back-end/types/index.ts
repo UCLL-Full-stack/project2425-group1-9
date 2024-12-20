@@ -36,7 +36,7 @@ type AuthenticationResponse = {
     role: string;
 };
 
-type Role = 'admin' | 'user' | 'guest';
+type Role = 'admin' | 'user' | 'tester';
 
 
 export {

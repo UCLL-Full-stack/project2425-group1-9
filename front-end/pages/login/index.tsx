@@ -7,7 +7,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 const predefinedUsers = [
   { username: "User1", password: "Password123", role: "admin" },
   { username: "User2", password: "Password123", role: "user" },
-  { username: "tester", password: "test123", role: "tester" },
+  { username: "Tester", password: "test123", role: "tester" },
 ];
 
 const Login: React.FC = () => {

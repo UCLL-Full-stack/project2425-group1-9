@@ -14,6 +14,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, loading, error }) => 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isTester, setIsTester] = useState(false); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +23,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, loading, error }) => 
       alert('Passwords do not match.');
       return;
     }
+        
+    const role = isTester ? 'tester' : 'user';
 
-    const userInput: User = { name, email, password, role: 'user'};
+    const userInput: User = { name, email, password, role};
     onSubmit(userInput);
   };
 
@@ -79,6 +82,17 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, loading, error }) => 
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
+      </div>
+      <div className="mb-6">
+        <label htmlFor="tester" className="block text-sm font-medium text-gray-700">Register as Tester</label>
+        <input
+          type="checkbox"
+          id="tester"
+          className="mt-1"
+          checked={isTester}
+          onChange={(e) => setIsTester(e.target.checked)}
+        />
+        <span className="ml-2 text-sm text-gray-600">Check this box if you want to register as a tester</span>
       </div>
 
       <button

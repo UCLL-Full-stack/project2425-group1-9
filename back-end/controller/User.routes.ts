@@ -59,6 +59,13 @@
  *              description: E-mail.
  *            role:
  *               $ref: '#/components/schemas/Role'
+ * 
+ *      UserInput2:
+ *          type: object
+ *          properties:
+ *            id:
+ *               type: number
+ *               format: int64
  *      Role:
  *          type: string
  *          enum: [user, admin, guest]
@@ -187,11 +194,8 @@ userRouter.get('/:name', async (req: Request, res: Response) => {
     const name = String(req.params.name);
     try {
         const user = await userService.getUserByName(name);
-        if (user) {
-            res.status(200).json(user);
-        } else {
-            res.status(404).json({ error: 'User  not found' });
-    }} catch (error) {
+        res.status(200).json(user);
+         } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
         res.status(400).json({ error: errorMessage });
     }
@@ -224,11 +228,8 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
     const userId = Number(req.params.id);
     try {
         const user = await userService.getUserById(userId);
-        if (user) {
-            res.status(200).json(user);
-        } else {
-            res.status(404).json({ error: 'User not found' });
-        }
+        res.status(200).json(user);
+        
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
         res.status(400).json({ error: errorMessage });
@@ -295,8 +296,6 @@ userRouter.delete('/:id', async (req: Request, res: Response) => {
         const deleted = await userService.deleteUser(userId);
         if (deleted) {
             res.status(200).json({ message: 'User deleted successfully' });
-        } else {
-            res.status(404).json({ error: 'User not found' });
         }
     } catch (error) {
         res.status(400).json({ error: 'Failed to delete User' });

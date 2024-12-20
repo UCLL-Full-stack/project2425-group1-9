@@ -9,9 +9,12 @@ import {taskRouter} from './controller/Task.routes';
 import { reminderRouter } from './controller/Reminder.routes';
 import { tagRouter } from './controller/Tag.routes';
 import { expressjwt } from 'express-jwt';
+import helmet from 'helmet';
 
 
 const app = express();
+app.use(helmet());
+
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 

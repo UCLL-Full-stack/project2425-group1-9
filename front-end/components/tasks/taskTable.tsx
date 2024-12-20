@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Task } from '../../types';
 import taskService from '@/services/TaskService';
-import ReminderForm from '../reminder/reminderAddForm'; // Import the new ReminderForm component
+import ReminderForm from '../reminder/reminderAddForm'; 
 
 interface TaskTableProps {
     tasks: Task[];
@@ -12,11 +12,11 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
     const [selectedDescription, setSelectedDescription] = useState<string | null>(null);
     const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [role, setRole] = useState<string | null>(null);
      
     useEffect(() => {
-        const role = JSON.parse(localStorage.getItem('loggedInUser'))?.role;
-        setIsAdmin(role === 'admin');
+        const userRole = JSON.parse(localStorage.getItem('loggedInUser'))?.role;
+        setRole(userRole);
     }, []);
 
     const handleDescriptionClick = (description: string) => {
@@ -46,13 +46,15 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
         setSelectedTask(task); 
         setIsReminderModalOpen(true); 
     };
+        
+    const isTester = role === 'tester';
 
     return (
         <div className="overflow-x-auto">
             <table className="table-auto border-collapse border border-gray-200 w-full text-left shadow-sm">
                 <thead className="bg-gray-800 text-white">
                     <tr>
-                        {isAdmin && <th className="border border-gray-300 pl-2 py-2">User</th>} 
+                        {role === 'admin' && <th className="border border-gray-300 pl-2 py-2">User</th>} 
                         <th className="border border-gray-300 pl-2 py-2">Title</th>
                         <th className="border border-gray-300 px-4 py-2">Description</th>
                         <th className="border border-gray-300 px-4 py-2">Priority</th>
@@ -60,14 +62,18 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
                         <th className="border border-gray-300 px-4 py-2">Tags</th>
                         <th className="border border-gray-300 px-10 py-2">Reminder</th>
                         <th className="border border-gray-300 px-4 py-2">Status</th>
-                        <th className="border border-gray-300 px-4 py-2">Edit task</th>
-                        <th className="border border-gray-300 px-4 py-2">Delete Task</th>
+                        {!isTester && (
+                            <>
+                                <th className="border border-gray-300 px-4 py-2">Edit task</th>
+                                <th className="border border-gray-300 px-4 py-2">Delete Task</th>
+                            </>
+                        )}
                     </tr>
                 </thead>
                 <tbody className="bg-white">
                     {tasks.map((task, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                            {isAdmin && (
+                            {role === 'admin' && (
                                 <td className="border border-gray-300 pl-2 py-2">
                                     {task.user?.name || 'Unknown'}
                                 </td>
@@ -103,12 +109,16 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit }) => {
                             >
                                 {task.status }
                             </td>
-                            <td className="border border-gray-300 px-4 py-2">
-                                <button className="px-3 py-1 bg-blue-600 text-white rounded-md" onClick={() => onEdit(task)}>Edit</button>
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2">
-                                <button className="px-3 py-1 bg-red-600 text-white rounded-md" onClick={() => handleDelete(task.id)}>Delete</button>
-                            </td>
+                            {!isTester && (
+                                <>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        <button className="px-3 py-1 bg-blue-600 text-white rounded-md" onClick={() => onEdit(task)}>Edit</button>
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        <button className="px-3 py-1 bg-red-600 text-white rounded-md" onClick={() => handleDelete(task.id)}>Delete</button>
+                                    </td>
+                                </>
+                            )}
                         </tr>
                     ))}
                 </tbody>

@@ -17,6 +17,21 @@
  *           type: string
  *           format: date-time
  *           description: The time for the reminder (ISO 8601 format).
+ *         reminderMessage:
+ *           type: string
+ * 
+ *     ReminderInput:
+ *       type: object
+ *       properties:
+ *         reminderTime:
+ *           type: string
+ *           format: date-time
+ *           description: The time for the reminder (ISO 8601 format).
+ *         reminderMessage:
+ *           type: string
+ * 
+ * 
+ * 
  */
 
 import express, { Request, Response } from 'express';
@@ -37,7 +52,7 @@ const reminderRouter = express.Router();
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Reminder'
+ *              $ref: '#/components/schemas/ReminderInput'
  *      responses:
  *         201:
  *            description: The created Reminder.
@@ -97,5 +112,7 @@ reminderRouter.delete('/:id', async (req: Request, res: Response) => {
         res.status(400).json({ error: 'Failed to delete reminder' });
     }
 });
+
+
 
 export {reminderRouter};

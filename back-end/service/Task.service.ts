@@ -53,16 +53,20 @@ const getAllTasks = async ({
     role,
 }: {
     name: string;
-    role: string; 
+    role: string;
 }): Promise<Task[]> => {
     if (role === 'admin') {
-        return taskRepository.getAllTasks();
+        return taskRepository.getAllTasks(); 
     } else if (role === 'user') {
-        return taskRepository.getTasksByUserName(name); 
+        return taskRepository.getTasksByUserName(name);
+    } else if (role === 'tester') {
+        const testerTask = await taskRepository.getTesterTask('TesterTask'); 
+        return testerTask ? [testerTask] : []; 
     } else {
         throw new Error('You are not authorized to access this resource.');
     }
 };
+
 
 const updateTask = async (updatedTaskInput: TaskInput): Promise<Task | null> => {
     if (!updatedTaskInput.id) {

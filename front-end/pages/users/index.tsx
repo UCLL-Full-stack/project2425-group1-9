@@ -28,7 +28,7 @@ const UsersPage: React.FC = () => {
         if (role === 'admin') {
           const data = await userService.getAllUsers();
           setUsers(data);
-        } else if (role === 'user'){
+        } else if (role === 'user' || role === 'tester'){
           const data = await userService.getUserByName(name); 
           setUsers([data]);
         } else {

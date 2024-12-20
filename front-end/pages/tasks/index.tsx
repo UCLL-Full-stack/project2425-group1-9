@@ -67,11 +67,11 @@ const UserTasksPage: React.FC = () => {
             <main className="bg-gray-100 min-h-screen flex flex-col items-center py-8">
                 <div className="w-full max-w-7xl px-2">
                     <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
-                        {userRole === 'admin' ? 'All Users Tasks' : userRole === 'user' ? 'Your Tasks' : 'Unauthorized'}
+                        {userRole === 'admin' ? 'All Users Tasks' : userRole === 'user' ? 'Your Tasks' : userRole === 'tester' ? 'Your Tasks': 'Unauthorized'}
                     </h1>
                     
                     <div className="flex justify-center space-x-4 mb-6">
-                        {userRole && (userRole === 'admin' || userRole === 'user') && (
+                        {userRole && (userRole === 'admin' || userRole === 'user' || userRole === 'tester') && (
                             <>
                                 <div>
                                     <label className="block font-medium text-gray-700 mb-1">Filter by Deadline</label>
@@ -111,7 +111,7 @@ const UserTasksPage: React.FC = () => {
                         )}
                     </div>
 
-                    {userRole && (userRole === 'admin' || userRole === 'user') && (
+                    {userRole && (userRole === 'admin' || userRole === 'user' ) && (
                         <div className="text-center mb-4">
                             <button
                                 onClick={() => setShowForm(true)}

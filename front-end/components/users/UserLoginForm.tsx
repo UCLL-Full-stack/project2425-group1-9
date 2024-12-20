@@ -19,30 +19,13 @@ const UserLoginForm: React.FC = () => {
     setPasswordError(null);
     setStatusMessages([]);
   };
-
-  const validate = (): boolean => {
-    let result = true;
-
-    if (!name.trim()) {
-      setNameError("Username required.");
-      result = false;
-    }
-
-    if (!password.trim()) {
-      setPasswordError("Password required.");
-      result = false;
-    }
-
-    return result;
-  };
+  
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     clearErrors();
 
-    if (!validate()) {
-        return;
-    }
+    
 
     const user = { name, password };
     try {

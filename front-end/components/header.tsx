@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import LanguageSwitcher from '../components/Language/LanguageSelector';
 import { useTranslation } from 'next-i18next';
+import userService from '@/services/UserService';
 
 
 const Header: React.FC = () => {
@@ -17,7 +18,17 @@ const Header: React.FC = () => {
     }
   }, []);
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    const user = await userService.getUserByName(loggedInUser.name);
+
+    if (loggedInUser?.role === 'tester') {
+    try {
+      await userService.deleteUser(user.id);
+    } catch (error) {
+      console.error('Failed to delete tester account:', error);
+    }
+  }
+
     localStorage.removeItem('loggedInUser');
     setLoggedInUser(null);
   };

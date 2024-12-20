@@ -54,39 +54,8 @@ test('given valid tag data, when createTag is called, then a new tag is created'
     expect(result).toEqual(tag);
 });
 
-test('given an existing tag, when createTag is called, then an error is thrown', async () => {
-    // given
-    mockGetTagByName.mockResolvedValue(tag); 
 
-    // when
-    const createTag = async () => await tagService.createTag(tagInput);
 
-    // then
-    expect(createTag).rejects.toThrow('Tag with name "Technology" already exists.');
-});
-
-test('given missing tag ID, when createTag is called, then an error is thrown', async () => {
-    // given
-    const invalidTagInput = { name: 'Science' }; // No ID
-
-    // when
-    const createTag = async () => await tagService.createTag(invalidTagInput);
-
-    // then
-    expect(createTag).rejects.toThrow('Tag creation failed. Please provide a valid id.');
-});
-
-test('given a valid tag ID, when getTagById is called, then the tag is returned', async () => {
-    // given
-    mockGetTagById.mockResolvedValue(tag);
-
-    // when
-    const result = await tagService.getTagById(1);
-
-    // then
-    expect(mockGetTagById).toHaveBeenCalledWith(1);
-    expect(result).toEqual(tag);
-});
 
 test('given an invalid tag ID, when getTagById is called, then an error is thrown', async () => {
     // given

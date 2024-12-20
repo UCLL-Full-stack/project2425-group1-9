@@ -4,7 +4,7 @@
     "dev": "next dev -p 8080",
     "build": "next build",
     "start": "npm run dev",
-    "test": "jest"
+    "test": "jest --config jest.config.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

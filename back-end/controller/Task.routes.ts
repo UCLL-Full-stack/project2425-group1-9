@@ -40,7 +40,63 @@
  *         user:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/User'  
+ *             $ref: '#/components/schemas/User' 
+ * 
+ *     TaskInput:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: The title of the task.
+ *         description:
+ *           type: string
+ *           description: The description of the task.
+ *         priority:
+ *           type: string
+ *           description: The priority of the task.
+ *         deadline:
+ *           type: string
+ *           format: date-time
+ *           description: The deadline of the task.
+ *         status:
+ *            type: string  
+ *            description: The status of the task.
+ *         tags:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/TagInput'  
+ *         user:
+ *     
+ *             $ref: '#/components/schemas/UserInput2' 
+ *     
+ * 
+ *     TaskInput2:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: The title of the task.
+ *         description:
+ *           type: string
+ *           description: The description of the task.
+ *         priority:
+ *           type: string
+ *           description: The priority of the task.
+ *         deadline:
+ *           type: string
+ *           format: date-time
+ *           description: The deadline of the task.
+ *         status:
+ *            type: string  
+ *            description: The status of the task.
+ *         tags:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Tag'  
+ *         user:
+ *             $ref: '#/components/schemas/UserInput2' 
+ *         
+ *                  
  */ 
 
 import express, { Request, Response } from 'express';
@@ -62,7 +118,7 @@ const taskRouter = express.Router();
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Task'
+ *              $ref: '#/components/schemas/TaskInput'
  *      responses:
  *         201:
  *            description: The created Task.
@@ -89,10 +145,10 @@ taskRouter.post('/', async (req: Request, res: Response) => {
  *   get:
  *     security:
  *       - bearerAuth: []
- *     summary: Get a list of all tasks.
+ *     summary: Get a list of all loged in users tasks.
  *     responses:
  *       200:
- *         description: A list of tasks.
+ *         description: A list of your tasks.
  *         content:
  *           application/json:
  *             schema:
@@ -139,13 +195,10 @@ taskRouter.get('/:id', async (req: Request, res: Response) => {
     const taskId = Number(req.params.id);
     try {
         const task = await taskService.getTaskById(taskId);
-        if (task) {
-            res.status(200).json(task);
-        } else {
-            res.status(404).json({ error: 'Task not found' });
-        }
+        res.status(200).json(task);
+        
     } catch (error) {
-        res.status(400).json({ error: 'Failed to retrieve task' });
+        res.status(400).json({ error: `Task with id: ${taskId} does not exist.`  });
     }
 });
 
@@ -170,7 +223,7 @@ taskRouter.get('/:id', async (req: Request, res: Response) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Task'
+ *             $ref: '#/components/schemas/TaskInput2'
  *     responses:
  *       200:
  *         description: Successfully updated task.
@@ -266,9 +319,6 @@ taskRouter.delete('/:id', async (req: Request, res: Response) => {
 taskRouter.get('/user/:userId', async (req, res) => {
   try {
     const tasks = await taskService.getTaskByUserId(Number(req.params.userId));
-    if (!tasks || tasks.length === 0) {
-      return res.status(404).json({ error: 'No tasks found for this user' });
-    }
     res.json(tasks);
   } catch (error) {
         console.error('Error retrieving tasks for user:', error); // Log the error for debugging

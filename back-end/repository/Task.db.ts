@@ -146,12 +146,32 @@ const getTaskByReminderId = async (reminderId: number): Promise<Task | null> => 
       where: { reminderId: reminderId },
       include: { tags: true, reminder: true, user: true },
     });
-    return taskPrisma ? Task.from(taskPrisma) : null; // Return null if no task is found
+    return taskPrisma ? Task.from(taskPrisma) : null; 
   } catch (error) {
     console.error(error);
     throw new Error('Database error. See server log for details.');
   }
 };
+
+const getTesterTask = async (title: string): Promise<Task | null> => {
+  try {
+    const taskPrisma = await database.task.findFirst({
+      where: { title: title },
+      include: { tags: true, reminder: true, user: true },
+    });
+
+    if (taskPrisma) {
+      return Task.from(taskPrisma); 
+    }
+
+    return null;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database error. See server log for details.');
+  }
+};
+
+
 
 export default {
   createTask,
@@ -163,4 +183,5 @@ export default {
   getTasksByUserId,
   getTasksByUserName,
   getTaskByReminderId,
+  getTesterTask
 };

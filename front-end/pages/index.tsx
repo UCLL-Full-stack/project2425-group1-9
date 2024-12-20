@@ -5,7 +5,7 @@ import Header from '../components/header';
 import styles from '../styles/home.module.css';
 
 const Home: React.FC = () => {
-  const { t } = useTranslation('common'); // Gebruik vertalingen uit de 'common.json'
+  const { t } = useTranslation('common'); 
 
   return (
     <>
@@ -24,12 +24,15 @@ const Home: React.FC = () => {
         <div className={styles.description}>
           <p>{t('todo_description')}</p>
         </div>
+
+        <div>
+          <img src="/images/Todo.jpg" alt="Todo foto" />
+        </div>
       </main>
     </>
   );
 };
 
-// Server-side vertalingen
 export const getServerSideProps = async ({ locale }: { locale: string }) => {
   return {
     props: {

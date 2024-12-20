@@ -16,7 +16,25 @@
  *         name:
  *           type: string
  *           description: The name of the tag.
+ * 
+ *     TagInput:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: number
+ *           format: int64
+ * 
+ *     TagInput2:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ * 
+ * 
+ * 
  */
+
+
 
 import express, { Request, Response } from 'express';
 import tagService from '../service/Tag.service';
@@ -36,7 +54,7 @@ const tagRouter = express.Router();
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Tag'
+ *              $ref: '#/components/schemas/TagInput2'
  *      responses:
  *         201:
  *            description: The created tag.
