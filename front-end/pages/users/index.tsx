@@ -53,7 +53,7 @@ const UsersPage: React.FC = () => {
       <main className="bg-gray-100 min-h-screen flex flex-col items-center py-8">
         <div className="w-full max-w-6xl px-4">
           <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
-            {userRole === 'admin' ? 'All Users' : userRole === 'user' ? 'My Profile' : 'Unauthorized'}
+            {userRole === 'admin' ? 'All Users' : userRole === 'user' ? 'My Profile' : userRole === 'tester' ? 'My Profile' : 'Unauthorized'}
           </h1>
 
           {loading && <p className="text-center text-blue-500">Loading users...</p>}
